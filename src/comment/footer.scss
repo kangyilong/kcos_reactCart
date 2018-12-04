@@ -1,0 +1,42 @@
+$width: 50px;
+$pi: 2;
+@function arc(){
+  @return $width * $pi;
+}
+.footer{
+  width: 100%;
+  margin: 60px auto 0;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  .foo-box{
+    width: 83%;
+    margin: 30px auto 0;
+    padding: 20px 0px 40px;
+    border-bottom: 1px solid #e6e6e6;
+    display: flex;
+    .foo-left{
+      width: 70%;
+      .foo-u_ul{
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        li{
+          h5{
+            color: #646464;
+            font-size: 15px;
+            margin-bottom: 10px;
+          }
+          .foo-i_ul{
+            li{
+              margin: 5px 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  a{
+    color: #969696;
+    font-size: 13px;
+  }
+}

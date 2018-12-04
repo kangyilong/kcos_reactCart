@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { NavLink } from 'react-router-dom';
+import logo from './static/images/y.jpg';
 import './App.css';
 
 class App extends Component {
@@ -7,18 +8,11 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+          <div className="img-box">
+              <img src={logo} className="App-logo" alt="logo" />
+          </div>
+          <h3>K_COS</h3>
+           <p><NavLink to="/home" className="ks">开始你的旅程 -></NavLink></p>
         </header>
       </div>
     );

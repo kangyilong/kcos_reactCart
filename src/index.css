@@ -1,3 +1,4 @@
+@import '~antd/dist/antd.css';
 body {
   margin: 0;
   padding: 0;
@@ -12,3 +13,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.fl{
+  float: left;
+}
+.fr{
+  float: right;
+}
+.none{
+  display: none !important;
+}
+
