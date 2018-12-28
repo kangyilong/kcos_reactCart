@@ -1,16 +1,11 @@
 const Mysql = require('mysql');
+const { _SQLCONFIG } = require('../config');
 
-const pool = Mysql.createPool({ // 创建连接池
-  host: 'localhost',
-  user: 'root',
-  port: '3306',
-  database: 'kcos',
-  password: 'kyl666666',
-  connectionLimit: 50  // 最大连接数
-});
+// 创建数据库连接
+const pool = Mysql.createPool(_SQLCONFIG);
 
 // 通过connection的query方法统一执行增删改查的操作。
-function poolFn(connecQuery) {
+function poolFn(connecQuery, statements, parameter) {
   // getConnection 创建连接池
   return new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
@@ -19,19 +14,23 @@ function poolFn(connecQuery) {
         reject('建立连接池失败');
         return;
       }
-      connecQuery(connection).then(data => {
+      connecQuery(connection, statements, parameter).then(data => {
         connection.release();   // 释放连接
         resolve(data);
       });
     });
-    console.log(pool._allConnections.length); // 连接池里的连接数
+    // console.log(pool._allConnections.length); // 连接池里的连接数
   });
 }
+/*
+* connection     连接句柄
+* statements     查询语句
+* */
 
 // 查询数据
-function connecQueryFind(connection) {
+function connecQueryFind(connection, statements) {
   return new Promise((resolve, reject) => {
-    connection.query('SELECT * FROM userMsg', (err, result) => {
+    connection.query(statements, (err, result) => {
       if(err) {
         throw err;
         reject('查询失败');
@@ -42,12 +41,12 @@ function connecQueryFind(connection) {
 }
 
 // 添加数据
-function connecQueryAdd(connection) {
+function connecQueryAdd(connection, statements, parameter) {
   return new Promise((resolve, reject) => {
-    connection.query('SELECT * FROM userMsg', (err, result) => {
+    connection.query(statements, parameter, (err, result) => {
       if(err) {
         throw err;
-        reject('查询失败');
+        reject('添加失败');
       }
       resolve(result);
     });
@@ -55,12 +54,12 @@ function connecQueryAdd(connection) {
 }
 
 // 删除数据
-function connecQueryDele(connection) {
+function connecQueryDele(connection, statements) {
   return new Promise((resolve, reject) => {
-    connection.query('SELECT * FROM userMsg', (err, result) => {
+    connection.query(statements, (err, result) => {
       if(err) {
         throw err;
-        reject('查询失败');
+        reject('删除失败');
       }
       resolve(result);
     });
@@ -68,39 +67,37 @@ function connecQueryDele(connection) {
 }
 
 // 修改数据
-function connecQueryExit(connection) {
+function connecQueryExit(connection, statements, parameter) {
   return new Promise((resolve, reject) => {
-    connection.query('SELECT * FROM userMsg', (err, result) => {
+    connection.query(statements, parameter, (err, result) => {
       if(err) {
         throw err;
-        reject('查询失败');
+        reject('修改失败');
       }
       resolve(result);
     });
   })
 }
 
-function queryFn(connecQuery) {
+function queryFn(connecQuery, statements, parameter) {
   return new Promise((resolve) => {
-    poolFn(connecQuery).then(data => {
+    poolFn(connecQuery, statements, parameter).then(data => {
       resolve(data);
     });
   });
 }
 
 module.exports = {
-  findData() {
-    return queryFn(connecQueryFind);
+  findData(statements, parameter) {
+    return queryFn(connecQueryFind, statements, parameter);
   },
-  addData() {
-    return queryFn(connecQueryAdd);
+  addData(statements, parameter) {
+    return queryFn(connecQueryAdd, statements, parameter);
   },
-  deleData() {
-    return queryFn(connecQueryDele);
+  deleData(statements, parameter) {
+    return queryFn(connecQueryDele, statements, parameter);
   },
-  exitData() {
-    return queryFn(connecQueryExit);
+  exitData(statements, parameter) {
+    return queryFn(connecQueryExit, statements, parameter);
   }
 };
-
-

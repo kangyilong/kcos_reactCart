@@ -15,6 +15,22 @@ export default class Banner extends Component {
         {
           href: 'http://www.baidu.com',
           pic: '/static/images/y5.png'
+        },
+        {
+          href: 'http://www.baidu.com',
+          pic: '/static/images/y6.png'
+        },
+        {
+          href: 'http://www.baidu.com',
+          pic: '/static/images/y9.jpg'
+        },
+        {
+          href: 'http://www.baidu.com',
+          pic: '/static/images/y10.jpg'
+        },
+        {
+          href: 'http://www.baidu.com',
+          pic: '/static/images/y12.jpg'
         }
       ]
     }

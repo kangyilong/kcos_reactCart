@@ -53,7 +53,7 @@ export default class Header extends Component {
         <header>
           <div className="nav-box">
             <div className="nav-left">
-              <a href="/"><img src={require('../static/images/all/logo.png')} alt=""/></a>
+              <a href="/"><img src='/static/images/all/logo.png' alt=""/></a>
             </div>
             <div className="nav-right">
               <ul className="nav-ul">

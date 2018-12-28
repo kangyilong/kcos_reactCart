@@ -3,8 +3,10 @@
   height: 100%;
   margin: 0 auto;
   .sw-list{
+    position: relative;
     width: 100%;
     height: 100%;
+    white-space: nowrap;
     overflow: hidden;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
@@ -12,23 +14,63 @@
     li{
       display: inline-block;
       width: 0%;
-      height: 100%;
-      -webkit-transition: 3s;
-      -moz-transition: 3s;
-      -ms-transition: 3s;
-      -o-transition: 3s;
-      transition: 3s;
+      height: 0%;
+      -webkit-transition: all 1.6s;
+      -moz-transition: all 1.6s;
+      -ms-transition: all 1.6s;
+      -o-transition: all 1.6s;
+      transition: all 1.6s;
       a{
         display: block;
         width: 100%;
         height: 100%;
+        -webkit-background-size: 100% 100%;
+        background-size: 100% 100%;
         background-clip: content-box;
         background-position: center center;
         background-repeat: no-repeat;
       }
     }
+    .sw-bz{
+      position: absolute;
+      bottom: 3%;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      -moz-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+      -o-transform: translateX(-50%);
+      transform: translateX(-50%);
+      p{
+        margin: 0 6px;
+        display: inline-block;
+        width: 50px;
+        height: 5px;
+        background-color: #fff;
+        vertical-align: center;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        overflow: hidden;
+        span{
+          display: block;
+          width: 0%;
+          height: 100%;
+          border-radius: 5px;
+          background-color: orangered;
+        }
+        .set-span{
+          width: 100%;
+          -webkit-transition: width 4s;
+          -moz-transition: width 4s;
+          -ms-transition: width 4s;
+          -o-transition: width 4s;
+          transition: width 4s;
+        }
+      }
+    }
     .set-banner{
       width: 100%;
+      height: 100%;
     }
   }
 }
