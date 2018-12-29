@@ -9,10 +9,12 @@ let ComponentData = [
   {
     path: '/',
     component: AsyncComponent(() => import('./App'))
-  },
-  {
+  }, {
     path: '/home',
     component: AsyncComponent(() => import('./pages/home/home'))
+  }, {
+    path: '/shopDet',
+    component: AsyncComponent(() => import('./pages/shopDetail/shopDetail'))
   }
 ];
 

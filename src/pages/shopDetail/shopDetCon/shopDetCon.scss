@@ -1,0 +1,51 @@
+.shop-det_con{
+  width: 100%;
+  margin: 50px auto;
+  display: flex;
+  .con-head{
+    width: 100%;
+    position: relative;
+    z-index: 10;
+    height: 60px;
+    padding: 0 10px 0 24px;
+    border-radius: 8px 8px 0 0;
+    -webkit-box-shadow: rgba(0,0,0,.06) 0 1px 7px;
+    box-shadow: rgba(0,0,0,.06) 0 1px 7px;
+    background: #f3f3f3;
+    background: -webkit-gradient(linear,left top, left bottom,from(#fbfbfb),to(#ececec));
+    background: linear-gradient(#fbfbfb,#ececec);
+    line-height: 60px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    p{
+      display: inline-block;
+      padding: 0 20px;
+      font-size: 18px;
+      color: #444;
+      border-bottom: 2px solid #444;
+    }
+    .other{
+      border: none;
+    }
+  }
+  .con-content{
+    width: 75%;
+    background-color: #fff;
+    .con-box{
+      padding: 30px 80px 0 30px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      img{
+        width: 100%;
+      }
+    }
+  }
+  .con-slider{
+    width: 22%;
+    height: auto;
+    margin-left: 3%;
+    .det-intro{
+      background-color: #fff;
+    }
+  }
+}

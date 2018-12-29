@@ -15,7 +15,7 @@ class singShop extends Component {
     });
   }
   toShopCart(shopId) {
-    this.props.history.push('/add');
+    this.props.history.push('/shopDet');
   }
   render() {
     return (
