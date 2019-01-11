@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import './swiper.scss';
+import store from '../../reduxs/store';
+import { addTodo, toggleTodo, setVisibilityFilter, VisibilityFilters } from '../../reduxs/action';
 
 export default class Swiper extends Component {
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.state = {
       banTime: null,
       setBanner: 0,

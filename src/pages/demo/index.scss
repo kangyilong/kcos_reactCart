@@ -1,0 +1,26 @@
+.demo-box{
+  width: 80%;
+  margin: 40px auto;
+  .completed{
+    text-decoration: line-through;
+  }
+  .todo-list{
+    margin-top: 10px;
+    .no-data{
+      margin: 0 10px 10px;
+      font-size: 17px;
+      color: #666;
+    }
+  }
+  .sp-list{
+    span{
+      margin-right: 10px;
+      padding: 3px 6px;
+      color: #abcdef;
+      cursor: pointer;
+    }
+    .on{
+      color: yellow;
+    }
+  }
+}

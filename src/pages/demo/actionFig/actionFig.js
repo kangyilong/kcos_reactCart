@@ -1,0 +1,7 @@
+export const ADD_TODO = 'ADD_TODO';
+export const CONFIRM_TODO = 'CONFIRM_TODO';
+export const OPTIONS_TODO = {
+  SHOW_ALL: 'SHOW_ALL',
+  UNFINISHED: 'UNFINISHED',
+  FINISHED: 'FINISHED'
+};

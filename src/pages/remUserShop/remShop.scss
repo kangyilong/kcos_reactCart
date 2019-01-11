@@ -1,0 +1,43 @@
+.rem-shop {
+  text-align: center;
+  .success-tit{
+    margin: 30px auto;
+    h4{
+      text-align: center;
+      font-size: 24px;
+      font-weight: 400;
+      text-shadow: 5px 5px 6px #888;
+    }
+  }
+  .success-con{
+    width: 100%;
+    margin: 0 auto;
+    .shop-list{
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      li{
+        width: 23%;
+        margin: 1%;
+        padding: 20px;
+        background-color: #fff;
+        cursor: pointer;
+        .single-head{
+          width: 100%;
+          padding-bottom: 10px;
+          img{
+            width: 100%;
+          }
+        }
+        h5{
+          font-size: 17px;
+          color: #62a8ea;
+        }
+        p{
+          color: #f96868;
+          margin-bottom: 6px;
+        }
+      }
+    }
+  }
+}

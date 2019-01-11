@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
+import { getParamUrl } from '../../../comment/methods/util';
+import { withRouter } from 'react-router-dom';
 import './shopDetHead.scss';
 
-export default class ShopDetHead extends Component {
+class ShopDetHead extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,8 +15,10 @@ export default class ShopDetHead extends Component {
       productName: null,
       productPri: null,
       productTxt: null,
-      seleIndex: 0
+      seleIndex: 0,
+      shopId: null
     };
+    this.addShopCartFn = this.addShopCartFn.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -25,17 +29,29 @@ export default class ShopDetHead extends Component {
       defaultInv: nextProps.data.product_genre[0].value,
       productName: nextProps.data.product_name,
       productPri: (+nextProps.data.product_pri).toFixed(2),
-      productTxt: nextProps.product_txt
+      productTxt: nextProps.product_txt,
+      shopId: nextProps.data.product_genre[0].id
     })
   }
 
   seleShowImgFn(that, e) {
     let target = e.target;
-    let seleIndex = +target.getAttribute('data-index');
-    that.setState({
-      seleIndex,
-      defaultImg: that.state.productGenre[seleIndex].img
-    });
+    if(target.tagName.toLowerCase() === 'img') {
+      let seleIndex = +target.getAttribute('data-index');
+      let shopId = target.getAttribute('data-id');
+      that.setState({
+        seleIndex,
+        shopId,
+        defaultImg: that.state.productGenre[seleIndex].img
+      });
+    }
+  }
+
+  addShopCartFn() {
+    let productId = getParamUrl('shopId');
+    let shopId = this.state.shopId;
+    sessionStorage.setItem('productDet', JSON.stringify({productId, shopId}));
+    this.props.history.push('/addShop');
   }
 
   render() {
@@ -72,7 +88,7 @@ export default class ShopDetHead extends Component {
               </h5>
             </div>
             <div className="right-foo">
-              <Button type="primary">加入购物车</Button>
+              <Button type="primary" onClick={ this.addShopCartFn }>加入购物车</Button>
               <Button>加入收藏</Button>
             </div>
           </div>
@@ -81,3 +97,5 @@ export default class ShopDetHead extends Component {
     )
   }
 }
+
+export default withRouter(ShopDetHead);

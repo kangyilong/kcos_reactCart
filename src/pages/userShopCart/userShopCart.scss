@@ -1,0 +1,19 @@
+.user-shop_cart{
+  width: 100%;
+  margin: 0 auto;
+  .content{
+    width: 84%;
+    margin: 30px auto;
+    .user-cart{
+      margin-bottom: 30px;
+      background-color: #fff;
+      padding: 0 2px;
+      table{
+        text-align: center;
+        th{
+          text-align: center;
+        }
+      }
+    }
+  }
+}

@@ -46,6 +46,23 @@
     margin-left: 3%;
     .det-intro{
       background-color: #fff;
+      li{
+        text-align: center;
+        cursor: pointer;
+        border-bottom: 1px solid #e6e6e6;
+        h5{
+          color: #23527c;
+          letter-spacing: 2px;
+          margin-bottom: 5px;
+          margin-top: -15px;
+          font-size: 16px;
+          font-weight: 500;
+        }
+        p{
+          color: #f96868;
+          margin-bottom: 12px;
+        }
+      }
     }
   }
 }

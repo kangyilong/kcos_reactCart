@@ -6,13 +6,12 @@ export default class CompontHead extends Component {
   constructor(props) {
     super(props);
   }
-
   render() {
     let headRight = null;
     if(this.props.type === 'shopList') {
       headRight = <div className="head-right">
-                    <span onClick={ this.toLeft }>&lt;</span>
-                    <span onClick={ this.toRight }>&gt;</span>
+                    <span onClick={ this.props.toLeft }>&lt;</span>
+                    <span onClick={ this.props.toRight }>&gt;</span>
                   </div>;
     }else {
       headRight = <div className="head-right">

@@ -17,9 +17,9 @@ export default class HomeShopList extends Component {
     this.getParams = {
       statements: 'SELECT * FROM shopMsg'
     };
-    // let DATA = [{"detImg":"/static/images/all/1495869803526192.jpg"}];
+    // let DATA = [{"detImg":"/static/images/all/1495869911241064.jpg"}];
     // this.exitParams = {
-    //   statements: 'UPDATE shopMsg SET product_det=? WHERE product_id="KY_13141544361478180"',
+    //   statements: 'UPDATE shopMsg SET product_det=? WHERE product_id="KY_13141544361659402"',
     //   parameter: [JSON.stringify(DATA)]
     // };
     // product_genre  product_det
@@ -54,7 +54,7 @@ export default class HomeShopList extends Component {
       <div className='home-shoplist'>
         <div className="content">
           <div className="shop-list01">
-            <CompontHead type="shopList" data={ {tit: '热门产品', txt: 'Hot'} }/>
+            <CompontHead type="shopList" toLeft={ this.toLeft } toRight={ this.toRight } data={ {tit: '热门产品', txt: 'Hot'} }/>
             <div className="list-con">
               <ul className="con-ul" ref={ this.conUl }>
                 {

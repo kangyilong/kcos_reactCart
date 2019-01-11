@@ -1,0 +1,24 @@
+.user-shop_total {
+  margin-bottom: 30px;
+  padding: 20px 20px;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  .left{
+    font-size: 16px;
+    color: #606266;
+  }
+  .right{
+    display: flex;
+    margin-right: 15px;
+    p{
+      margin-right: 15px;
+      font-size: 15px;
+      color: #666;
+      span{
+        color: #f96868;
+        font-size: 24px;
+      }
+    }
+  }
+}

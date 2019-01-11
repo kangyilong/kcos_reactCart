@@ -7,7 +7,6 @@ class singShop extends Component {
     this.state = {
       setSlot: 0
     };
-    this.toShopCart = this.toShopCart.bind(this);
   }
   setSpanFn(spanIndex) {
     this.setState({
@@ -15,11 +14,11 @@ class singShop extends Component {
     });
   }
   toShopCart(shopId) {
-    this.props.history.push('/shopDet');
+    this.props.history.push(`/shopDet?shopId=${ shopId }`);
   }
   render() {
     return (
-      <li className={this.props.type === '1' ? 'sing-li' : 'sing-li sing02-li'} onClick={ this.toShopCart }>
+      <li className={this.props.type === '1' ? 'sing-li' : 'sing-li sing02-li'} onClick={ this.toShopCart.bind(this, this.props.data.product_id) }>
         <div className="sing-head">
           <ul className="head-img">
             {
