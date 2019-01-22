@@ -1,0 +1,41 @@
+.register{
+  width: 100%;
+  margin: 0 auto;
+  h4{
+    margin-top: 30px;
+    padding: 10px 50px;
+    font-size: 28px;
+    color: #333;
+    letter-spacing: 2px;
+  }
+  .content{
+    width: 100%;
+    margin: 0 auto;
+    .reg-container{
+      width: 50%;
+      margin: 60px auto;
+      .reg-form{
+        >div{
+          display: flex;
+          padding: 10px 0;
+          label{
+            min-width: 100px;
+            font-size: 16px;
+            padding-right: 20px;
+            text-align: right;
+            cursor: pointer;
+          }
+        }
+      }
+      .reg-foo{
+        margin-top: 50px;
+        text-align: right;
+        .foo-btn{
+          button{
+            margin-right: 20px;
+          }
+        }
+      }
+    }
+  }
+}

@@ -15,7 +15,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
+.wb{
+  background-color: #fff;
+}
 .fl{
   float: left;
 }

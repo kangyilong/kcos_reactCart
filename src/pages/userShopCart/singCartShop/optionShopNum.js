@@ -5,8 +5,9 @@ export default class OptionShopNum extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shopNum: props.data.shopNumber
-    }
+      shopNum: props.data.shopNumber,
+      shopPrice: props.data.shopPrice
+    };
     this.reducShopNum = this.reducShopNum.bind(this);
     this.addShopNum = this.addShopNum.bind(this);
   }
@@ -25,7 +26,7 @@ export default class OptionShopNum extends Component {
     this.setState({
       shopNum: this.state.shopNum
     }, () => {
-      this.props.onChange(this.state.shopNum);
+      this.props.onChange(this.state.shopNum, this.state.shopPrice);
     });
   }
   render() {

@@ -28,13 +28,14 @@ function poolFn(connecQuery, statements, parameter) {
 * */
 
 // 查询数据
-function connecQueryFind(connection, statements) {
+function connecQueryFind(connection, statements, parameter) {
   return new Promise((resolve, reject) => {
-    connection.query(statements, (err, result) => {
+    connection.query(statements, parameter, (err, result) => {
       if(err) {
         throw err;
         reject('查询失败');
       }
+      result.msg = 'ok';
       resolve(result);
     });
   })
@@ -48,19 +49,21 @@ function connecQueryAdd(connection, statements, parameter) {
         throw err;
         reject('添加失败');
       }
+      result.msg = 'ok';
       resolve(result);
     });
   })
 }
 
 // 删除数据
-function connecQueryDele(connection, statements) {
+function connecQueryDele(connection, statements, parameter) {
   return new Promise((resolve, reject) => {
-    connection.query(statements, (err, result) => {
+    connection.query(statements, parameter, (err, result) => {
       if(err) {
         throw err;
         reject('删除失败');
       }
+      result.msg = 'ok';
       resolve(result);
     });
   })
@@ -74,6 +77,7 @@ function connecQueryExit(connection, statements, parameter) {
         throw err;
         reject('修改失败');
       }
+      result.msg = 'ok';
       resolve(result);
     });
   })

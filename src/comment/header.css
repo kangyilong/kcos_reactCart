@@ -65,9 +65,8 @@ a{
     background-color: #fff;
 }
 .u-right{
+    cursor: pointer;
     font-size: 18px;
     width: 5%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: right;
 }

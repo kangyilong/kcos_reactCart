@@ -4,7 +4,7 @@ import ShopDetCon from "./shopDetCon/shopDetCon";
 import Header from "../../comment/header";
 import Footer from "../../comment/footer";
 import { getShopData } from "../../api/shopApi";
-import { getParamUrl } from '../../comment/methods/util';
+import { getQueryString } from '../../comment/methods/util';
 
 import './shopDetail.scss';
 
@@ -19,7 +19,7 @@ export default class ShopDetail extends Component {
 
   componentWillMount() {
     this.setState({
-      statements: `SELECT * FROM shopMsg where product_id="${ getParamUrl('shopId') }"`
+      statements: `SELECT * FROM shopMsg where product_id="${ getQueryString('shopId') }"`
     }, () => {
       getShopData({
         statements: this.state.statements

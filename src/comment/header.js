@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown, Icon, message } from 'antd';
+import { withRouter } from 'react-router-dom';
+import { isLogin } from './methods/util';
 
 import './header.css';
 
-export default class Header extends Component {
+class Header extends Component {
   constructor(props) {
     super(props);
   }
@@ -83,7 +85,15 @@ export default class Header extends Component {
                 </li>
               </ul>
               <div className="line"></div>
-              <div className="u-right">
+              <div className="u-right" onClick={ () => {
+                if(!isLogin()) {
+                  message.warning('还未登录哦，请登录').then(() => {
+                    this.props.history.push('/login');
+                  });
+                }else {
+                  this.props.history.push('/personal-index');
+                }
+              } }>
                 <span><Icon type="user" /></span>
               </div>
             </div>
@@ -93,3 +103,4 @@ export default class Header extends Component {
     );
   }
 }
+export default withRouter(Header);

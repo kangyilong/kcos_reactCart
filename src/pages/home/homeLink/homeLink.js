@@ -44,10 +44,12 @@ export default class HomeLink extends Component {
   }
   render() {
     return (
-      <div className='content'>
-        <ul className='link-ul'>
-          <HomeLinkFn data={this.state.data}/>
-        </ul>
+      <div className="home-link">
+        <div className='content'>
+          <ul className='link-ul'>
+            <HomeLinkFn data={this.state.data}/>
+          </ul>
+        </div>
       </div>
     );
   }

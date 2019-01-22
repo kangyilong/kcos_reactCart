@@ -52,7 +52,7 @@ export default class HomeShopList extends Component {
   render() {
     return (
       <div className='home-shoplist'>
-        <div className="content">
+        <div className="content wb">
           <div className="shop-list01">
             <CompontHead type="shopList" toLeft={ this.toLeft } toRight={ this.toRight } data={ {tit: '热门产品', txt: 'Hot'} }/>
             <div className="list-con">
@@ -66,7 +66,7 @@ export default class HomeShopList extends Component {
             </div>
           </div>
         </div>
-        <div className="content">
+        <div className="content wb">
           <div className="shop-list02">
             <CompontHead type="shop" data={ {tit: '官方精品', txt: 'Official'} }/>
             <div className="list-con list02-con">

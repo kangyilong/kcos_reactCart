@@ -35,7 +35,7 @@ export default class HomeOtType extends Component {
   render() {
     return (
       <div className="home_ottype">
-        <div className="content">
+        <div className="content wb">
           <div className="ot-list">
             <CompontHead type="ottype" data={ {tit: '应用', txt: 'Apps'} }/>
             <ul className="ot-ul">

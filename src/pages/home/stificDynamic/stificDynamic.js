@@ -31,7 +31,7 @@ export default class StificDynamic extends Component {
     ];
     return (
       <div className="home_stific">
-        <div className="content">
+        <div className="content wb">
           <div className="stific-list">
             <CompontHead type="stific" data={ {tit: '科学动态', txt: 'Science'} }/>
             <ul className="stific-ul">

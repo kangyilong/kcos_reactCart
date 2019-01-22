@@ -9,9 +9,9 @@ const {
   wantFindData
 } = require('../processData/processData');
 
-Route.post('/add',wantAddData);
-Route.get('/getShopMsg', wantFindData);
-Route.post('/exitShopMsg', wantExitData);
-Route.get('/delete', wantDeleData);
+Route.post('/addMsg',wantAddData);
+Route.get('/getMsg', wantFindData);
+Route.post('/exitMsg', wantExitData);
+Route.get('/delMsg', wantDeleData);
 
 module.exports = Route;
