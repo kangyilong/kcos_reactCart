@@ -3,7 +3,12 @@ import React, { Component } from 'react';
 import { Button, message } from 'antd';
 import { getQueryString, isLogin } from '../../../comment/methods/util';
 import { withRouter } from 'react-router-dom';
-import { shopJudgeCollection, addUserShopCart, addUserCollection } from '../../../api/userApi';
+import {
+  shopJudgeCollection,
+  addUserShopCart,
+  addUserCollection,
+  removeShopCollection
+} from '../../../api/userApi';
 import './shopDetHead.scss';
 
 class ShopDetHead extends Component {
@@ -21,6 +26,7 @@ class ShopDetHead extends Component {
       seleIndex: 0,
       shopId: null,
       collectionTxt: '',
+      isCollection: true,
       productId: getQueryString('shopId') // 产品ID
     };
     this.addShopCartFn = this.addShopCartFn.bind(this);
@@ -50,17 +56,24 @@ class ShopDetHead extends Component {
         this.state.productId,
         this.state.shopId
       ]);
+      let hisMsg = message.loading('');
       shopJudgeCollection({statements, parameter}).then(data => {
+        hisMsg();
         if(data && data.length > 0) {
           this.setState({
-            collectionTxt: '取消收藏'
+            collectionTxt: '取消收藏',
+            isCollection: false
           });
         }else {
           this.setState({
             collectionTxt: '加入收藏'
           })
         }
-      });
+      }, hisMsg);
+    }else {
+      this.setState({
+        collectionTxt: '加入收藏'
+      })
     }
   }
 
@@ -73,6 +86,8 @@ class ShopDetHead extends Component {
         seleIndex,
         shopId,
         defaultImg: that.state.productGenre[seleIndex].img
+      }, () => {
+        this.isJudgeShop();
       });
     }
   }
@@ -81,28 +96,48 @@ class ShopDetHead extends Component {
     let productId = this.state.productId;
     let shopId = this.state.shopId;
     let params = this.addUserTable('userCart', productId, shopId);
+    let hisMsg = message.loading('请稍后...');
     addUserShopCart(params).then(data => {
+      hisMsg();
       if(data.msg === 'ok') {
         message.success('加入购物车成功').then(() => {
           sessionStorage.setItem('productDet', JSON.stringify({productId, shopId}));
           this.props.history.push('/addShop');
         });
       }
-    });
+    }, hisMsg);
   }
   addCollectionFn() { // 加入收藏操作
-    if(this.state.collectionTxt === '加入收藏') {
+    let hisMsg = message.loading('请稍后...');
+    if(this.state.isCollection) {
       let params = this.addUserTable('userCollection', this.state.productId, this.state.shopId);
       addUserCollection(params).then(data => {
+        hisMsg();
         if(data.msg === 'ok') {
           message.success('加入收藏成功');
           this.setState({
-            collectionTxt: '取消收藏'
+            collectionTxt: '取消收藏',
+            isCollection: false
           });
         }
-      });
-    }else { // 取消收藏
-
+      }, hisMsg);
+    }else { // 取消收藏  delete from 表名 where id = ?
+      let statements = `delete from userCollection where userId=? and product_id=? and shopId=?`;
+      let parameter = JSON.stringify([
+        this.state.userId,
+        this.state.productId,
+        this.state.shopId
+      ]);
+      removeShopCollection({ statements, parameter}).then(data => {
+        hisMsg();
+        if(data.msg === 'ok') {
+          message.success('取消收藏成功');
+          this.setState({
+            collectionTxt: '加入收藏',
+            isCollection: true
+          })
+        }
+      }, hisMsg);
     }
   }
 

@@ -1,4 +1,4 @@
-import { SHOP_DET, ORDER_DET } from './visibility';
+import { SHOP_DET, PAGE_LOADING } from './visibility';
 import { getShopData } from '../api/shopApi';
 
 export function getShopDet(productData) {
@@ -14,6 +14,6 @@ export function getShopDetData(productId) {
   }
 }
 
-export function getOrderDet(orderId) {
-  return { type: ORDER_DET, orderId }
+export function pageLoading(isLoading) {
+  return { type: PAGE_LOADING, isLoading }
 }

@@ -1,4 +1,4 @@
-import { SHOP_DET, ORDER_DET } from './visibility';
+import { SHOP_DET, PAGE_LOADING } from './visibility';
 import { combineReducers } from 'redux';
 
 function getShopDet(state=[], action) {
@@ -12,8 +12,18 @@ function getShopDet(state=[], action) {
   }
 }
 
+function pageLoading(state, action) {
+  switch(action.type) {
+    case PAGE_LOADING:
+      return action.isLoading;
+    default:
+      return false;
+  }
+}
+
 export default combineReducers({
-  shopDet: getShopDet
+  shopDet: getShopDet,
+  showLoad: pageLoading
 })
 //
 // export default function getWantData(state=initialState, action) {

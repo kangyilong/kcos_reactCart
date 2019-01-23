@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import ROUTE from './route';
 import * as serviceWorker from './serviceWorker';
+import './index.css';
 
 
 ReactDOM.render(
-    <ROUTE />,
+  <ROUTE />,
   document.getElementById('root')
 );
 

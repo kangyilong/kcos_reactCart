@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AsyncComponent from './component/async-component/async-component';
 // 跳转到顶部
 import ScrollToTop from './component/scrollToTop/scrollToTop';
-
 import { Provider } from 'react-redux';
 import { createStore, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';

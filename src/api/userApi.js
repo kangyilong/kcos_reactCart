@@ -29,3 +29,8 @@ export async function addUserCollection(params) {
 export async function shopJudgeCollection(params) {
   return await fetch('/getMsg', 'get', params);
 }
+
+// 取消用户商品收藏
+export async function removeShopCollection(params) {
+  return await fetch('/delMsg', 'get', params);
+}
