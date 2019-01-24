@@ -8,8 +8,8 @@ export function mapStateToProps(state) {
 export function mapDispatchToProps(dispatch) {
   const productDet = JSON.parse(sessionStorage.getItem('productDet'));
   return {
-    getShopSuccessData: () => {
-      dispatch(getShopDetData(productDet.productId))
+    getShopSuccessData: (productId) => {
+      dispatch(getShopDetData(productId ? productId : productDet.productId))
     }
   }
 }

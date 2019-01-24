@@ -55,7 +55,7 @@ let wantDeleData = async(ctx) => { // 删除数据
 
 let wantExitData = async(ctx) => { // 修改数据
   let res = ctx.request.body;
-  let parameter = res.parameter;
+  let parameter = JSON.parse(res.parameter);
   let statements = res.statements;
   ctx.response.type = 'json';
   await exitData(statements, parameter).then(data => {

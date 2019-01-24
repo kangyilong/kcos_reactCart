@@ -20,6 +20,16 @@ export async function addUserShopCart(params) {
   return await fetch('/addMsg', 'post', params);
 }
 
+// 修改购物车商品数量
+export async function exitUserShop(params) {
+  return await fetch('/exitMsg', 'post', params);
+}
+
+// 查询用户购物车商品
+export async function queryCartShop(params) {
+  return await fetch('/getMsg', 'get', params);
+}
+
 // 添加商品到用户收藏
 export async function addUserCollection(params) {
   return await fetch('/addMsg', 'post', params);
