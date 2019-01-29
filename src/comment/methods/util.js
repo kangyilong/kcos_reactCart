@@ -18,3 +18,21 @@ export function getQueryString(name, search) {
 export function isLogin() {
   return !!sessionStorage.getItem('isLogin');
 }
+
+// 数组中对象取相同id的一条数据
+export function toHeavyFn(data, id) {
+  if(Array.isArray(data)) {
+    let i = 0, len = data.length;
+    let arr = [];
+    let obj = {};
+    for(i; i < len; i ++) {
+      if(!obj[data[i][id]]) {
+        arr.unshift(data[i]);
+        obj[data[i][id]] = i;
+      }
+    }
+    return arr;
+  }else {
+    return '';
+  }
+}

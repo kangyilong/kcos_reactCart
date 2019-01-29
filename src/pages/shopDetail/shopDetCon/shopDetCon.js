@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { getShopData } from "../../../api/shopApi";
+import { wantShopData } from "../../../api/shopApi";
 import { withRouter } from 'react-router-dom';
+import { getQueryString, toHeavyFn } from '../../../comment/methods/util';
 
 import './shopDetCon.scss';
 
@@ -9,7 +10,8 @@ class ShopDetCon extends Component {
     super(props);
     this.state = {
       shopDetIntro: [],
-      shopList: []
+      shopList: [],
+      statementsDet: `SELECT * FROM productMsg where product_id="${ getQueryString('productId') }"`
     };
     this.getParams = {
       statements: 'SELECT * FROM shopMsg'
@@ -17,34 +19,30 @@ class ShopDetCon extends Component {
   }
 
   componentWillMount() {
-    getShopData(this.getParams).then(data => {
-      data.map(item => {
-        item.product_genre = JSON.parse(item.product_genre);
-        item.product_det = JSON.parse(item.product_det);
-        item.product_pri = item.product_pri.toFixed(2);
-      });
-      data.length = 5;
+    wantShopData({ statements: this.state.statementsDet }).then(data => {
       this.setState({
-        shopList: data
+        shopDetIntro: JSON.parse(data[0].product_det)
+      });
+    });
+    wantShopData(this.getParams).then(data => {
+      let dset = toHeavyFn(data, 'product_id');
+      dset.length = 5;
+      this.setState({
+        shopList: dset
       });
     });
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      shopDetIntro: nextProps.data
-    });
+
   }
 
   // 选择商品查看详情
   onClickShopFn(that, e) {
     let target = e.target;
-    let shopId = target.getAttribute('data-id');
-    that.props.history.push(`/shopDet?shopId=${ shopId }`);
+    let productId = target.getAttribute('data-id');
+    that.props.history.push(`/shopDet?productId=${ productId }`);
     window.location.reload();
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 100);
   }
 
   render() {
@@ -73,11 +71,11 @@ class ShopDetCon extends Component {
               this.state.shopList.map((item, index) => (
                 <li key={ index }>
                   <div className="intro-head">
-                    <img src={ item.product_genre[0].img } data-id={ item.product_id }/>
+                    <img src={ item.shop_pic } data-id={ item.product_id }/>
                   </div>
                   <div className="intro-con">
-                    <h5>{ item.product_name }</h5>
-                    <p>{ item.product_pri }</p>
+                    <h5>{ item.shop_name }</h5>
+                    <p>{ item.shop_pri }</p>
                   </div>
                 </li>
               ))

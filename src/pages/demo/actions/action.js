@@ -25,8 +25,6 @@ export function optionsTodo(filter) {
 
 export function conMsg() {
   return (dispatch, getState) => {
-    let msg = getState();
-    console.log(msg);
     dispatch(optionsTodo('FINISHED'));
   }
 }

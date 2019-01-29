@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Input, Button, message } from 'antd';
-import { userLogin } from '../../api/userApi';
+import { wantShopData } from '../../api/shopApi';
 import { getElementFn } from '../../comment/methods/util';
 
 import './login.scss';
@@ -34,17 +35,17 @@ class Login extends Component {
     }
     let queryName = '';
     if(userName.includes('@')) {
-      queryName = 'userEmail';
+      queryName = 'user_email';
     } else {
-      queryName = 'userName';
+      queryName = 'user_nick_name';
     }
-    let statements = `SELECT * FROM userMsg WHERE ${queryName} = ? and userPaw = ?`;
+    let statements = `SELECT * FROM userMsg WHERE ${queryName} = ? and user_paw = ?`;
     let parameter = JSON.stringify([userName, userPaw]);
     let hideMsg = message.loading('努力登录中...');
-    userLogin({statements, parameter}).then(data => {
+    wantShopData({statements, parameter}).then(data => {
       hideMsg();
-      if(data[0].id) {
-        sessionStorage.setItem('isLogin', data[0].id);
+      if(data[0].user_id) {
+        sessionStorage.setItem('isLogin', data[0].user_id);
         message.success('登录成功！').then(() => {
           this.props.history.push(this.state.backUrl);
         });
@@ -75,6 +76,9 @@ class Login extends Component {
             <div className="foo-btn">
               <Button onClick={ this.resetOperation }>重置</Button>
               <Button type="primary" onClick={ this.loginOperation }>登录</Button>
+            </div>
+            <div className="foo">
+              <Link to="/register">还未注册？</Link>
             </div>
           </div>
         </div>

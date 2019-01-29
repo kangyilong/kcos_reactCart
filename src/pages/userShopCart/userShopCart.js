@@ -1,59 +1,102 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import Header from '../../comment/header';
 import Footer from '../../comment/footer';
 import RemShop from '../remUserShop/remShop';
+import { Table, Button, message } from 'antd';
 import ShopCartList from './shopCartList';
 import UserShopTotal from './userShopTotal';
-import { Table } from 'antd';
-import { Button } from 'antd';
-import { getShopData } from '../../api/shopApi';
+import { wantShopData } from '../../api/shopApi';
+import {toHeavyFn} from "../../comment/methods/util";
 
 import './userShopCart.scss';
+
+function mapStateToProps(state) {
+  return {
+    shopTotal: state.changeSingSum
+  };
+}
 
 class UserShopCart extends Component {
   constructor(props) {
     super(props);
     this.state = {
       productData: [],
-      data: [{
-        shopId: '1',
-        shopName: 'John Brown',
-        shopPrice: 32,
-        shopNumber: 1,
-        shopImg: '/static/images/y5.png'
-      }, {
-        shopId: '2',
-        shopName: 'Jim Green',
-        shopPrice: 42,
-        shopNumber: 2,
-        shopImg: '/static/images/y5.png'
-      }, {
-        shopId: '3',
-        shopName: 'Joe Black',
-        shopPrice: 32,
-        shopNumber: 3,
-        shopImg: '/static/images/y5.png'
-      }, {
-        shopId: '4',
-        shopName: 'Disabled User',
-        shopPrice: 99,
-        shopNumber: 4,
-        shopImg: '/static/images/y5.png'
-      }]
+      data: [],
+      totalMsg: {}, // 单选后总价
+      totalData: [], // 全选后总价
+      cartLength: 0,
+      statements: 'SELECT * FROM shopMsg',
+      statementsCart: 'SELECT * FROM userCart'
     };
+    this.allShopOption = this.allShopOption.bind(this);
   }
   componentWillMount() {
-    getShopData({statements: 'SELECT * FROM shopMsg'}).then(data => {
-      data.map(item => {
-        item.product_genre = JSON.parse(item.product_genre)[0];
-        item.product_pri = item.product_pri.toFixed(2) + '元';
-      });
-      data.length = 8;
+    let hidMsg = message.loading('正努力加载中...');
+    Promise.all([
+      wantShopData({ statements: this.state.statements }),
+      wantShopData({ statements: this.state.statementsCart })
+    ]).then(([res1, res2]) => {
+      let dset = toHeavyFn(res1, 'product_id');
+      dset.length = 8;
       this.setState({
-        productData: data
-      })
+        productData: dset,
+        data: res2,
+        totalData: res2,
+        cartLength: res2.length
+      }, hidMsg);
     });
+  }
+  componentWillReceiveProps(nextProps) {
+    if(nextProps !== this.props) {
+      let sum = 0, tdata = [], shopTotal = nextProps.shopTotal;
+      this.state.data.forEach(dItem => {
+        shopTotal.forEach(tItem => {
+          if(dItem.shop_id === tItem.shopId) {
+            dItem.shop_val = parseFloat(tItem.singSum) / parseFloat(dItem.shop_pri)
+          }
+        });
+        tdata.push(dItem);
+      });
+      shopTotal.forEach(item => {
+        sum += parseFloat(item.singSum);
+      });
+      this.setState({
+        totalData: tdata,
+        totalMsg: {
+          total: sum,
+          len: shopTotal.length,
+          isLength: this.state.cartLength === shopTotal.length
+        }
+      });
+    }else {
+      return false;
+    }
+  }
+
+  allShopOption(isSelect) {
+    let sum = 0;
+    if(isSelect) { // 全选
+      this.state.totalData.forEach(item => {
+        sum += parseFloat(item.shop_pri) * item.shop_val;
+      });
+      this.setState({
+        totalMsg: {
+          total: sum,
+          len: this.state.data.length,
+          isLength: true
+        }
+      });
+    }else { // 取消全选
+      this.setState({
+        totalMsg: {
+          total: sum,
+          len: 0,
+          isLength: false
+        }
+      });
+    }
   }
 
   render() {
@@ -62,9 +105,12 @@ class UserShopCart extends Component {
         <Header />
         <div className="content">
           <div className="user-cart">
-            <ShopCartList  shopData={ this.state.data }/>
+            <ShopCartList shopData={ this.state.data }/>
           </div>
-          <UserShopTotal />
+          <UserShopTotal
+            onChange={ this.allShopOption }
+            totalMsg={ this.state.totalMsg }
+          />
           <RemShop productData={ this.state.productData }/>
         </div>
         <Footer />
@@ -72,4 +118,4 @@ class UserShopCart extends Component {
     )
   }
 }
-export default withRouter(UserShopCart);
+export default connect(mapStateToProps)(UserShopCart);

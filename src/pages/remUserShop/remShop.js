@@ -9,7 +9,7 @@ class RemShop extends Component {
   }
   // 点击查看详情
   shopClickFn(that, productId) {
-    that.props.history.push(`/shopDet?shopId=${ productId }`);
+    that.props.history.push(`/shopDet?productId=${ productId }`);
   }
   render() {
     return (
@@ -23,10 +23,10 @@ class RemShop extends Component {
               this.props.productData.map((item, index) => (
                 <li key={ index } onClick={ () => this.shopClickFn(this, item.product_id) }>
                   <div className="single-head">
-                    <img src={ item.product_genre.img } alt=""/>
+                    <img src={ item.shop_pic } alt=""/>
                   </div>
-                  <h5>{ item.product_name }</h5>
-                  <p>{ item.product_pri }</p>
+                  <h5>{ item.shop_name }</h5>
+                  <p>{ item.shop_pri }</p>
                 </li>
               ))
             }

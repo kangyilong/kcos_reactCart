@@ -9,11 +9,14 @@
       padding: 15px 0px;
       display: flex;
       align-items: center;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
       >div{
         text-align: center;
         vertical-align: center;
         min-width: 50px;
-        height: 40px;
         line-height: 40px;
         input{
           display: inline-block;
@@ -22,10 +25,13 @@
           cursor: pointer;
         }
       }
+      .children01{
+        cursor: pointer;
+      }
       .children02{
         flex: 4;
         display: flex;
-        padding-left: 50px;
+        padding-left: 10px;
         .left{
           width: 70px;
           img{
@@ -33,10 +39,12 @@
           }
         }
         .right{
+          padding-left: 10px;
           max-width: 200px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
+          line-height: 5;
         }
       }
       .children03{

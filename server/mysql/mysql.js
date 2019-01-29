@@ -5,7 +5,7 @@ const { _SQLCONFIG } = require('../config');
 const pool = Mysql.createPool(_SQLCONFIG);
 
 // 通过connection的query方法统一执行增删改查的操作。
-function poolFn(connecQuery, statements, parameter) {
+function poolFn(connecQuery, statements, parameter, requestType) {
   // getConnection 创建连接池
   return new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
@@ -14,7 +14,7 @@ function poolFn(connecQuery, statements, parameter) {
         reject('建立连接池失败');
         return;
       }
-      connecQuery(connection, statements, parameter).then(data => {
+      connecQuery(connection, statements, parameter, requestType).then(data => {
         connection.release();   // 释放连接
         resolve(data);
       });
@@ -27,8 +27,12 @@ function poolFn(connecQuery, statements, parameter) {
 * statements     查询语句
 * */
 
-// 查询数据
-function connecQueryFind(connection, statements, parameter) {
+// 想要操作的数据
+function connecWantData(connection, statements, parameter, requestType) {
+  switch(requestType) {
+    case 'ALL_SHOP': // 查询所有商品
+      break;
+  }
   return new Promise((resolve, reject) => {
     connection.query(statements, parameter, (err, result) => {
       if(err) {
@@ -41,67 +45,16 @@ function connecQueryFind(connection, statements, parameter) {
   })
 }
 
-// 添加数据
-function connecQueryAdd(connection, statements, parameter) {
-  return new Promise((resolve, reject) => {
-    connection.query(statements, parameter, (err, result) => {
-      if(err) {
-        throw err;
-        reject('添加失败');
-      }
-      result.msg = 'ok';
-      resolve(result);
-    });
-  })
-}
-
-// 删除数据
-function connecQueryDele(connection, statements, parameter) {
-  return new Promise((resolve, reject) => {
-    connection.query(statements, parameter, (err, result) => {
-      if(err) {
-        throw err;
-        reject('删除失败');
-      }
-      result.msg = 'ok';
-      resolve(result);
-    });
-  })
-}
-
-// 修改数据
-function connecQueryExit(connection, statements, parameter) {
-  return new Promise((resolve, reject) => {
-    connection.query(statements, parameter, (err, result) => {
-      if(err) {
-        throw err;
-        reject('修改失败');
-      }
-      result.msg = 'ok';
-      resolve(result);
-    });
-  })
-}
-
-function queryFn(connecQuery, statements, parameter) {
+function queryFn(connecQuery, statements, parameter, requestType) {
   return new Promise((resolve) => {
-    poolFn(connecQuery, statements, parameter).then(data => {
+    poolFn(connecQuery, statements, parameter, requestType).then(data => {
       resolve(data);
     });
   });
 }
 
 module.exports = {
-  findData(statements, parameter) {
-    return queryFn(connecQueryFind, statements, parameter);
-  },
-  addData(statements, parameter) {
-    return queryFn(connecQueryAdd, statements, parameter);
-  },
-  deleData(statements, parameter) {
-    return queryFn(connecQueryDele, statements, parameter);
-  },
-  exitData(statements, parameter) {
-    return queryFn(connecQueryExit, statements, parameter);
+  wantData(statements, parameter, requestType) {
+    return queryFn(connecWantData, statements, parameter, requestType);
   }
 };

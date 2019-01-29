@@ -3,8 +3,6 @@ import ShopDetHead from "./shopDetHead/shopDetHead";
 import ShopDetCon from "./shopDetCon/shopDetCon";
 import Header from "../../comment/header";
 import Footer from "../../comment/footer";
-import { getShopData } from "../../api/shopApi";
-import { getQueryString } from '../../comment/methods/util';
 
 import './shopDetail.scss';
 
@@ -12,27 +10,9 @@ export default class ShopDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      statements: null,
-      productData: {}
+      productData: [],
+      productDet: []
     };
-  }
-
-  componentWillMount() {
-    this.setState({
-      statements: `SELECT * FROM shopMsg where product_id="${ getQueryString('shopId') }"`
-    }, () => {
-      getShopData({
-        statements: this.state.statements
-      }).then(data => {
-        data.map(item => {
-          item.product_genre = JSON.parse(item.product_genre);
-          item.product_det = JSON.parse(item.product_det);
-        });
-        this.setState({
-          productData: data[0]
-        });
-      });
-    });
   }
 
   render() {
@@ -40,8 +20,8 @@ export default class ShopDetail extends Component {
       <div className="shop-detail">
         <Header />
         <div className="contain">
-          <ShopDetHead data={ this.state.productData }/>
-          <ShopDetCon data={ this.state.productData.product_det }/>
+          <ShopDetHead />
+          <ShopDetCon data={ this.state.productDet }/>
         </div>
         <Footer />
       </div>

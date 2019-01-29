@@ -1,18 +1,11 @@
 /* eslint-disable no-unused-expressions */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { Button, message } from 'antd';
 import { getQueryString, isLogin } from '../../../comment/methods/util';
 import { mapStateToProps, mapDispatchToProps } from '../../../reduxs/mapDataToProps';
-import {
-  shopJudgeCollection,
-  addUserShopCart,
-  addUserCollection,
-  removeShopCollection,
-  queryCartShop,
-  exitUserShop
-} from '../../../api/userApi';
-import { exitShopData } from '../../../api/shopApi';
+import { wantShopData } from '../../../api/shopApi';
 import './shopDetHead.scss';
 
 class ShopDetHead extends Component {
@@ -20,8 +13,7 @@ class ShopDetHead extends Component {
     super(props);
     this.state = {
       userId: sessionStorage.getItem('isLogin'),
-      productGenre: [],
-      productDet: [],
+      shopMsgData: [],
       defaultImg: null,
       defaultInv: null,
       productName: null,
@@ -30,47 +22,51 @@ class ShopDetHead extends Component {
       seleIndex: 0,
       shopId: null,
       collectionTxt: '',
+      addShopVal: 0,
       isCollection: true,
-      productId: getQueryString('shopId') // 产品ID
+      isOper: true,
+      productId: getQueryString('productId'), // 产品ID
+      statements: `SELECT * FROM shopMsg where product_id="${ getQueryString('productId') }"`,
     };
     this.addShopCartFn = this.addShopCartFn.bind(this);
     this.addCollectionFn = this.addCollectionFn.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) { // this.props状态变化是触发
-    this.setState({
-      productGenre: nextProps.data.product_genre,
-      productDet: nextProps.data.product_det,
-      defaultImg: nextProps.data.product_genre[0].img,
-      defaultInv: nextProps.data.product_genre[0].value,
-      productName: nextProps.data.product_name,
-      productPri: (+nextProps.data.product_pri).toFixed(2),
-      productTxt: nextProps.product_txt,
-      shopId: nextProps.data.product_genre[0].id
-    }, () => {
-      this.isJudgeShop();
+  componentWillMount() {
+    wantShopData({ statements: this.state.statements }).then(data => {
+      this.setState({
+        shopMsgData: data,
+        defaultImg: data[0].shop_pic,
+        defaultInv: data[0].shop_Num,
+        productName: data[0].shop_name,
+        productPri: data[0].shop_pri,
+        productTxt: data[0].shop_txt,
+        shopId: data[0].shop_id
+      }, () => {
+        this.isJudgeShop();
+      });
     });
   }
 
   shouldComponentUpdate(nowProps) { // 加入购物车操作成功后，库存数量减一
     if(!(nowProps === this.props)) {
-      let isExit = false;
-      let productGenre = nowProps.data.product_genre;
-      productGenre.map(item => {
-        if(item.id === this.state.shopId) {
-          item.value --;
-          isExit = true;
-        }
-        return item;
-      });
-      if(isExit) {
-        let productGenreString = JSON.stringify(productGenre);
-        let statements = `update shopMsg set product_genre=? where product_id=?`;
+      // 先查到商品的库存数量 this.state.addShopVal
+      let allStatements = `select * from shopMsg where product_id=? and shop_id=?`;
+      let allParameter = JSON.stringify([
+        this.state.productId,
+        this.state.shopId
+      ]);
+      wantShopData({ statements: allStatements, parameter: allParameter }).then(data => {
+        // 查询成功后再进行更新数据操作
+        let remainNum = data[0].shop_Num - 1; // 总数量 - 加入购物车数量
+        let statements = `update shopMsg set shop_Num=? where product_id=? and shop_id=?`;
         let parameter = JSON.stringify([
-          productGenreString,
-          this.state.productId
+          remainNum,
+          this.state.productId,
+          this.state.shopId
         ]);
-        exitShopData({ statements, parameter }).then(data => {
+        wantShopData({ statements, parameter }).then(data => {
+          // 更新库存成功
           if(data.msg === 'ok') {
             this.state.defaultInv --;
             this.setState({
@@ -78,15 +74,15 @@ class ShopDetHead extends Component {
             });
           }
         });
-      }
+      });
     }
     return nowProps;
   }
 
   isJudgeShop() { // 判断该商品是否被收藏
     if(isLogin()) {
-      let hisMsg = message.loading('加载中...');
-      shopJudgeCollection(this.queryParams('userCollection')).then(data => {
+      let hisMsg = message.loading('');
+      wantShopData(this.queryParams('userCollection')).then(data => {
         hisMsg();
         if(data && data.length > 0) {
           this.setState({
@@ -112,11 +108,17 @@ class ShopDetHead extends Component {
       let seleIndex = +target.getAttribute('data-index');
       let shopId = target.getAttribute('data-id');
       let defaultInv = target.getAttribute('data-value');
+      let productTxt = target.getAttribute('data-txt');
+      let productPri = target.getAttribute('data-pri');
+      let productName = target.getAttribute('title');
       that.setState({
         seleIndex,
         shopId,
         defaultInv,
-        defaultImg: that.state.productGenre[seleIndex].img
+        productTxt,
+        productPri,
+        productName,
+        defaultImg: that.state.shopMsgData[seleIndex].shop_pic
       }, () => {
         this.isJudgeShop();
       });
@@ -124,42 +126,48 @@ class ShopDetHead extends Component {
   }
 
   addShopCartFn() { // 加入购物车操作
-    let productId = this.state.productId;
-    let shopId = this.state.shopId;
-    let params = this.addUserTable('userCart', productId, shopId);
-    if(params) {
-      let hisMsg = message.loading('请稍后...');
-      queryCartShop(this.queryParams('userCart')).then(data => {
-        if(data.length > 0) {
-          // 用户购物表中已存在该商品，需数量加一
-          // update 表名 set 字段1 = ?,字段2 = ?,字段3 = ? where id = ?
-          let shopNum = data[0].shopNum + 1;
-          let statements = `update userCart set shopNum=? where userId=? and product_id=? and shopId=?`;
-          let parameter = JSON.stringify([
-            shopNum,
-            this.state.userId,
-            this.state.productId,
-            this.state.shopId
-          ]);
-          exitUserShop({ statements, parameter }).then(data => {
-            hisMsg();
-            this.props.getShopSuccessData(this.state.productId);
-            return;
-            if(data.msg === 'ok') {
-              this.addCartSuccess(productId, shopId);
-            }
-          }, hisMsg);
-        } else {
-          addUserShopCart(params).then(data => {
-            hisMsg();
-            this.props.getShopSuccessData(this.state.productId);
-            return;
-            if(data.msg === 'ok') {
-              this.addCartSuccess(productId, shopId);
-            }
-          }, hisMsg);
-        }
+    if(this.state.isOper) {
+      this.setState({
+        isOper: false
       });
+      let productId = this.state.productId;
+      let shopId = this.state.shopId;
+      let params = this.addUserTable('userCart', productId, shopId, 1, this.state.productPri);
+      if(params) {
+        let hisMsg = message.loading('请稍后...');
+        wantShopData(this.queryParams('userCart')).then(data => {
+          if(data.length > 0) {
+            // 用户购物表中已存在该商品，需数量加一
+            // update 表名 set 字段1 = ?,字段2 = ?,字段3 = ? where id = ?
+            this.setState({
+              addShopVal: data[0].shop_val + 1  // 加入到购物车中相同商品的数量
+            }, () => {
+              let statements = `update userCart set shop_val=? where user_id=? and product_id=? and shop_id=?`;
+              let parameter = JSON.stringify([
+                this.state.addShopVal,
+                this.state.userId,
+                this.state.productId,
+                this.state.shopId
+              ]);
+              wantShopData({ statements, parameter }).then(data => {
+                hisMsg();
+                this.props.getShopSuccessData(this.state.productId, this.state.shopId);
+                if(data.msg === 'ok') {
+                  this.addCartSuccess(productId, shopId);
+                }
+              }, hisMsg);
+            });
+          } else {
+            wantShopData(params).then(data => {
+              hisMsg();
+              this.props.getShopSuccessData(this.state.productId, this.state.shopId);
+              if(data.msg === 'ok') {
+                this.addCartSuccess(productId, shopId);
+              }
+            }, hisMsg);
+          }
+        });
+      }
     }
   }
 
@@ -171,43 +179,50 @@ class ShopDetHead extends Component {
   }
 
   addCollectionFn() { // 加入收藏操作
-    let hisMsg = message.loading('请稍后...');
-    if(this.state.isCollection) {
-      let params = this.addUserTable('userCollection', this.state.productId, this.state.shopId);
-      if(params) {
-        addUserCollection(params).then(data => {
+    if(this.state.isOper) {
+      this.setState({
+        isOper: false
+      });
+      let hisMsg = message.loading('请稍后...');
+      if(this.state.isCollection) {
+        let params = this.addUserTable('userCollection', this.state.productId, this.state.shopId);
+        if(params) {
+          wantShopData(params).then(data => {
+            hisMsg();
+            if(data.msg === 'ok') {
+              message.success('加入收藏成功');
+              this.setState({
+                collectionTxt: '取消收藏',
+                isCollection: false,
+                isOper: true
+              });
+            }
+          }, hisMsg);
+        }
+      }else { // 取消收藏  delete from 表名 where id = ?
+        let statements = `delete from userCollection where user_id=? and product_id=? and shop_id=?`;
+        let parameter = JSON.stringify([
+          this.state.userId,
+          this.state.productId,
+          this.state.shopId
+        ]);
+        wantShopData({ statements, parameter }).then(data => {
           hisMsg();
           if(data.msg === 'ok') {
-            message.success('加入收藏成功');
+            message.success('取消收藏成功');
             this.setState({
-              collectionTxt: '取消收藏',
-              isCollection: false
-            });
+              collectionTxt: '加入收藏',
+              isCollection: true,
+              isOper: true
+            })
           }
         }, hisMsg);
       }
-    }else { // 取消收藏  delete from 表名 where id = ?
-      let statements = `delete from userCollection where userId=? and product_id=? and shopId=?`;
-      let parameter = JSON.stringify([
-        this.state.userId,
-        this.state.productId,
-        this.state.shopId
-      ]);
-      removeShopCollection({ statements, parameter }).then(data => {
-        hisMsg();
-        if(data.msg === 'ok') {
-          message.success('取消收藏成功');
-          this.setState({
-            collectionTxt: '加入收藏',
-            isCollection: true
-          })
-        }
-      }, hisMsg);
     }
   }
 
   queryParams(queryTable) { // 查询收藏表或购物车表参数
-    let statements = `select * from ${queryTable} where userId=? and product_id=? and shopId=?`;
+    let statements = `select * from ${queryTable} where user_id=? and product_id=? and shop_id=?`;
     let parameter = JSON.stringify([
       this.state.userId,
       this.state.productId,
@@ -216,25 +231,39 @@ class ShopDetHead extends Component {
     return {statements, parameter};
   }
 
-  addUserTable(userType, productId, shopId) {
+  addUserTable(userType, productId, shopId, shopVal, shopPri) {
     if(!isLogin()) {
       message.warning('请登录后操作').then(() => {
-        sessionStorage.setItem('backUrl', `shopDet?shopId=${productId}`);
+        sessionStorage.setItem('backUrl', `shopDet?productId=${productId}`);
         this.props.history.push('login');
       });
       return false;
     }
-    // 加入用户表操作
-    let statements = `insert into ${userType} (code,userId,shopId,product_id,product_name,product_pri,product_genre) values (?,?,?,?,?,?,?)`;
-    let parameter = JSON.stringify([
-      'kcos1314' + new Date().getTime() + Math.floor(Math.random() * 10000),
-      this.state.userId,
-      shopId,
-      productId,
-      this.state.productName,
-      parseFloat(this.state.productPri),
-      JSON.stringify(this.state.productGenre[this.state.seleIndex])
-    ]);
+    // 加入用户购物或收藏表操作
+    let statements = '', parameter = '';
+    if(shopVal === 0) {
+      message.error('不能加入0件商品');
+    }
+    let code = 'kcos' + new Date().getTime() + Math.floor(Math.random() * 10000);
+    if(shopVal) {
+      statements = `insert into ${userType} (code,user_id,shop_id,product_id,shop_val,shop_pri) values (?,?,?,?,?,?)`;
+      parameter = JSON.stringify([
+        code,
+        this.state.userId,
+        shopId,
+        productId,
+        shopVal,
+        shopPri
+      ]);
+    }else {
+      statements = `insert into ${userType} (code,user_id,shop_id,product_id) values (?,?,?,?)`;
+      parameter = JSON.stringify([
+        code,
+        this.state.userId,
+        shopId,
+        productId
+      ]);
+    }
     return {statements, parameter};
   }
 
@@ -251,9 +280,17 @@ class ShopDetHead extends Component {
             <div className="left-foo">
               <ul className="con-img_list" onClick={ (e) => this.seleShowImgFn(this, e) }>
                 {
-                  this.state.productGenre.map((item, index) => (
+                  this.state.shopMsgData.map((item, index) => (
                     <li key={ index } className={ this.state.seleIndex === index ? 'set-li' : ''}>
-                      <img src={ item.img } data-id={ item.id } data-index={ index } data-value={ item.value }/>
+                      <img
+                        src={ item.shop_pic }
+                        title={ item.shop_name }
+                        data-id={ item.shop_id }
+                        data-index={ index }
+                        data-value={ item.shop_Num }
+                        data-txt={ item.shop_txt }
+                        data-pri={ item.shop_pri }
+                      />
                     </li>
                   ))
                 }
@@ -282,4 +319,4 @@ class ShopDetHead extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShopDetHead);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ShopDetHead));

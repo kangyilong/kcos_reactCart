@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getShopData } from '../../../api/shopApi';
+import { wantShopData } from '../../../api/shopApi';
 import SingShop from './singShop';
 import CompontHead from '../homeComHead/compontHead';
 
@@ -14,31 +14,43 @@ export default class HomeShopList extends Component {
     };
 
     this.conUl = React.createRef();
-    this.getParams = {
+    this.productParams = {
+      statements: 'SELECT * FROM productMsg',
+      requestType: 'ALL_SHOP'
+    };
+    this.shopParams = {
       statements: 'SELECT * FROM shopMsg'
     };
-    // let DATA = [{"detImg":"/static/images/all/1495869911241064.jpg"}];
-    // this.exitParams = {
-    //   statements: 'UPDATE shopMsg SET product_det=? WHERE product_id="KY_13141544361659402"',
-    //   parameter: [JSON.stringify(DATA)]
-    // };
-    // product_genre  product_det
     this.toLeft = this.toLeft.bind(this);
     this.toRight = this.toRight.bind(this);
   }
   componentWillMount() {
-    getShopData(this.getParams).then(data => {
-      data.map(item => {
-        item.product_genre = JSON.parse(item.product_genre);
-        item.product_det = JSON.parse(item.product_det);
+    Promise.all([
+      wantShopData(this.productParams),
+      wantShopData(this.shopParams)
+    ]).then(([productData, shopData]) => {
+      let data = [], data2 = [];
+      productData.forEach((productItem) => {
+        let arr = shopData.filter(item => item.product_id === productItem.product_id);
+        data.push(arr);
+        data2.unshift(arr);
       });
-      data.length = 8;
-      let shopData02 = JSON.parse(JSON.stringify(data));
+      data2.length = 6;
       this.setState({
         shopData: data,
-        shopData02: shopData02.splice(2, data.length)
+        shopData02: data2
       });
     });
+    // data.map(item => {
+    //   item.product_genre = JSON.parse(item.product_genre);
+    //   item.product_det = JSON.parse(item.product_det);
+    // });
+    // data.length = 8;
+    // let shopData02 = JSON.parse(JSON.stringify(data));
+    // this.setState({
+    //   shopData: data,
+    //   shopData02: shopData02.splice(2, data.length)
+    // });
     // exitShopData(this.exitParams).then(data => {
     //   console.log(data);
     // });

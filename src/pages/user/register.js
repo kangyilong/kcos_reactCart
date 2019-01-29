@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Button, message } from 'antd';
-import { userRegister, validationUser } from '../../api/userApi';
+import { wantShopData } from '../../api/shopApi';
 import { getElementFn } from '../../comment/methods/util';
 import './register.scss';
 
@@ -41,8 +41,8 @@ export default class Register extends Component {
       message.error('密码不一致');
       return;
     }
-    let statements = 'insert into userMsg(id, userName, userEmail, userPaw) values (?, ?, ?, ?)';
-    let userId = 'kcos1314' + new Date().getTime();
+    let statements = 'insert into userMsg(user_id, user_nick_name, user_email, user_paw) values (?, ?, ?, ?)';
+    let userId = 'kcos1314' + new Date().getTime() + Math.floor(Math.random() * 10000);
     let parameter = JSON.stringify([
       userId,
       userName,
@@ -50,7 +50,7 @@ export default class Register extends Component {
       userPaw
     ]);
     let hideMsg = message.loading('正在努力为你注册中...', 0);
-    userRegister({statements, parameter}).then(data => {
+    wantShopData({statements, parameter}).then(data => {
       hideMsg();
       if(data.msg === 'ok') {
         message.success('注册成功').then(() => {
@@ -72,7 +72,7 @@ export default class Register extends Component {
   validationData(queryName, target, objName) {
     let statements = `select * from userMsg where ${queryName} = ?`;
     let parameter = JSON.stringify([target.value]);
-    validationUser({ statements, parameter }).then(data => {
+    wantShopData({ statements, parameter }).then(data => {
       if(data.length > 0) {
         message.error(`抱歉，该${objName}已存在`);
         target.value = '';
@@ -91,14 +91,14 @@ export default class Register extends Component {
                 <label htmlFor="name">昵 称:</label>
                 <Input id="name" required onBlur={ (e) => {
                   let target = e.target;
-                  this.validationData('userName', target, '昵称');
+                  this.validationData('user_nick_name', target, '昵称');
                 } }/>
               </div>
               <div className="reg-email">
                 <label htmlFor="email">邮 箱:</label>
                 <Input id="email" type="email" required onBlur={ (e) => {
                   let target = e.target;
-                  this.validationData('userEmail', target, '邮箱');
+                  this.validationData('user_email', target, '邮箱');
                 } }/>
               </div>
               <div className="reg-paw">

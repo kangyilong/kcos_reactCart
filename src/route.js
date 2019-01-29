@@ -22,6 +22,12 @@ let ComponentData = [
     path: '/home',
     component: AsyncComponent(() => import('./pages/home/home'))
   }, {
+    path: '/register',
+    component: AsyncComponent(() => import('./pages/user/register'))
+  }, {
+    path: '/login',
+    component: AsyncComponent(() => import('./pages/user/login'))
+  }, {
     path: '/shopDet',
     component: AsyncComponent(() => import('./pages/shopDetail/shopDetail'))
   }, {
@@ -30,7 +36,11 @@ let ComponentData = [
   }, {
     path: '/shopCart',
     component: AsyncComponent(() => import('./pages/userShopCart/userShopCart'))
-  }, {
+  }
+];
+
+/*
+, {
     path: '/register',
     component: AsyncComponent(() => import('./pages/user/register'))
   }, {
@@ -39,13 +49,11 @@ let ComponentData = [
   }, {
     path: '/personal-index',
     component: AsyncComponent(() => import('./pages/user/personal/index'))
-  }
-];
-
-// , {
-//   path: '/demoIndex',
-//     component: AsyncComponent(() => import('./pages/demo/index'))
-// }
+  }, {
+  path: '/demoIndex',
+    component: AsyncComponent(() => import('./pages/demo/index'))
+}
+*/
 
 function comRoute() {
   return ComponentData.map((item) => <Route exact key={item.path} path={item.path} component={item.component}/>)

@@ -1,6 +1,7 @@
-import { SHOP_DET, PAGE_LOADING } from './visibility';
+import { SHOP_DET, CHECK_SHOP_NUMBER, UNCHECK_SHOP, SELECT_ALL_SHOP } from './visibility';
 import { combineReducers } from 'redux';
 
+// 获取商品详情
 function getShopDet(state=[], action) {
   switch(action.type) {
     case SHOP_DET:
@@ -11,19 +12,44 @@ function getShopDet(state=[], action) {
       return state;
   }
 }
-
-function pageLoading(state, action) {
+// 选中或取消选中商品
+function checkedShop(state=[], action) {
   switch(action.type) {
-    case PAGE_LOADING:
-      return action.isLoading;
+    case CHECK_SHOP_NUMBER:
+      let isRepeat = false;
+      let newState = state.map(item => {
+        if(item.shopId === action.singMsg.shopId) {
+          isRepeat = true;
+          return {...item, ...action.singMsg}
+        }else {
+          return item;
+        }
+      });
+      if(isRepeat) {
+        return newState;
+      }else {
+        return [...state, action.singMsg];
+      }
+    case UNCHECK_SHOP:
+      return state.filter(item => item.shopId !== action.singMsg.shopId);
     default:
-      return false;
+      return state;
+  }
+}
+
+function selectAllShop(state = [], action) {
+  switch(action.type) {
+    case SELECT_ALL_SHOP:
+      return action.seleStatus;
+    default:
+      return state;
   }
 }
 
 export default combineReducers({
   shopDet: getShopDet,
-  showLoad: pageLoading
+  changeSingSum: checkedShop,
+  selectAll: selectAllShop
 })
 //
 // export default function getWantData(state=initialState, action) {

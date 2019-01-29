@@ -5,11 +5,21 @@ export default class OptionShopNum extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shopNum: props.data.shopNumber,
-      shopPrice: props.data.shopPrice
+      shopNum: 0,
+      shopPrice: '',
+      isNeed: true
     };
     this.reducShopNum = this.reducShopNum.bind(this);
     this.addShopNum = this.addShopNum.bind(this);
+  }
+  componentWillReceiveProps(nextProps) {
+    if(this.state.isNeed) { // 防止数据在每次改变是重复渲染
+      this.setState({
+        shopNum: nextProps.shopVal,
+        shopPrice: nextProps.data.shop_pri,
+        isNeed: false
+      });
+    }
   }
   reducShopNum() {
     if(this.state.shopNum > 1) {
@@ -17,7 +27,7 @@ export default class OptionShopNum extends Component {
       this.setState({
         shopNum: this.state.shopNum
       }, () => {
-        this.props.onChange(this.state.shopNum, this.props.data.shopPrice);
+        this.props.onChange(this.state.shopNum, this.state.shopPrice);
       });
     }
   }
