@@ -12,6 +12,7 @@ import './home.scss';
 
 export default class Home extends Component {
   componentWillMount() {
+
   }
   render() {
     return (

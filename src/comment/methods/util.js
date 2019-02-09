@@ -19,6 +19,11 @@ export function isLogin() {
   return !!sessionStorage.getItem('isLogin');
 }
 
+// 获取用户ID
+export function getUserId() {
+  return sessionStorage.getItem('isLogin');
+}
+
 // 数组中对象取相同id的一条数据
 export function toHeavyFn(data, id) {
   if(Array.isArray(data)) {

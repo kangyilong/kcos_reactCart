@@ -44,7 +44,7 @@ class Login extends Component {
     let hideMsg = message.loading('努力登录中...');
     wantShopData({statements, parameter}).then(data => {
       hideMsg();
-      if(data[0].user_id) {
+      if(data[0]) {
         sessionStorage.setItem('isLogin', data[0].user_id);
         message.success('登录成功！').then(() => {
           this.props.history.push(this.state.backUrl);

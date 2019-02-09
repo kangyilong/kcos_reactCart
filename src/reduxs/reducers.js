@@ -1,4 +1,4 @@
-import { SHOP_DET, CHECK_SHOP_NUMBER, UNCHECK_SHOP, SELECT_ALL_SHOP } from './visibility';
+import {SHOP_DET, SELECT_ALL_SHOP, GET_USER_CART, TOGGLE_SHOP } from './visibility';
 import { combineReducers } from 'redux';
 
 // 获取商品详情
@@ -12,26 +12,23 @@ function getShopDet(state=[], action) {
       return state;
   }
 }
-// 选中或取消选中商品
-function checkedShop(state=[], action) {
+
+// 获取用户购物车商品
+function getUserCartData(state=[], action) {
   switch(action.type) {
-    case CHECK_SHOP_NUMBER:
-      let isRepeat = false;
-      let newState = state.map(item => {
-        if(item.shopId === action.singMsg.shopId) {
-          isRepeat = true;
-          return {...item, ...action.singMsg}
-        }else {
-          return item;
+    case GET_USER_CART:
+      return [
+        ...action.userCartData
+      ];
+    case TOGGLE_SHOP:  // 选中或取消选中商品
+      state.map(item => {
+        if(action.shopId === item.shop_id) {
+          item.isSelected = !item.isSelected;
         }
       });
-      if(isRepeat) {
-        return newState;
-      }else {
-        return [...state, action.singMsg];
-      }
-    case UNCHECK_SHOP:
-      return state.filter(item => item.shopId !== action.singMsg.shopId);
+      return [
+        ...state
+      ];
     default:
       return state;
   }
@@ -48,8 +45,8 @@ function selectAllShop(state = [], action) {
 
 export default combineReducers({
   shopDet: getShopDet,
-  changeSingSum: checkedShop,
-  selectAll: selectAllShop
+  selectAll: selectAllShop,
+  userCartData: getUserCartData
 })
 //
 // export default function getWantData(state=initialState, action) {

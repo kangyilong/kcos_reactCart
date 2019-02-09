@@ -12,7 +12,6 @@ export default class HomeShopList extends Component {
       shopData: [],
       shopData02: []
     };
-
     this.conUl = React.createRef();
     this.productParams = {
       statements: 'SELECT * FROM productMsg',

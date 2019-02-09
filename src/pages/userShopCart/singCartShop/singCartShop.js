@@ -2,20 +2,20 @@ import React, { Component } from 'react';
 import { Button } from 'antd';
 import OptionShopNum from './optionShopNum';
 import { connect } from 'react-redux';
-import { CHECK_SHOP_NUMBER, UNCHECK_SHOP } from '../../../reduxs/visibility';
+import { TOGGLE_SHOP } from '../../../reduxs/visibility';
 import { checkShopNumber } from "../../../reduxs/action";
 import { wantShopData } from "../../../api/shopApi";
 
 function mapStateToProps(state) {
   return {
-    allShopStatus: state.selectAll
+    allShopData: state
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    shopTotalFn(type, shopSum, shopId) {
-      dispatch(checkShopNumber(type, shopSum, shopId));
+    shopTotalFn(type, shopId) {
+      dispatch(checkShopNumber(type, shopId));
     }
   }
 }
@@ -28,7 +28,8 @@ class SingCartShop extends Component{
       statements: `SELECT * FROM shopMsg WHERE shop_id = '${props.singData.shop_id}'`,
       shopSum: 0,  // 最后商品单总价
       singData: {},  // 该条商品信息
-      isChecked: false
+      isChecked: true,
+      isNo: true
     };
     this.getChildData = this.getChildData.bind(this);
     this.selectCheckFn = this.selectCheckFn.bind(this);
@@ -41,33 +42,27 @@ class SingCartShop extends Component{
       });
     });
   }
-  componentWillReceiveProps(nextProps) {
-    if(nextProps !== this.props){
-      this.setState({
-        isChecked: nextProps.allShopStatus
-      })
-    }
-    return true;
-  }
   getChildData(newShopNum, price) { // 得到该商品的总价
     this.setState({
       shopSum: (newShopNum * price).toFixed(2)
-    }, () => {
-      if(this.state.isChecked) { // 选中后
-        this.props.shopTotalFn(CHECK_SHOP_NUMBER, this.state.shopSum, this.state.singData.shop_id);
-      }
     })
   }
+  componentWillReceiveProps(nextProps) {
+    if(this.state.isNo) {
+      this.setState({
+        isChecked: this.props.singData.isSelected,
+        isNo: false
+      }, () => {
+        setTimeout(() => {
+          this.setState({
+            isNo: true
+          });
+        }, 20);
+      });
+    }
+  }
   selectCheckFn() {
-    this.setState({
-      isChecked: !this.state.isChecked
-    }, () => {
-      if(this.state.isChecked) { // 选中后
-        this.props.shopTotalFn(CHECK_SHOP_NUMBER, this.state.shopSum, this.state.singData.shop_id);
-      }else { // 取消选中
-        this.props.shopTotalFn(UNCHECK_SHOP, this.state.shopSum, this.state.singData.shop_id);
-      }
-    });
+    this.props.shopTotalFn(TOGGLE_SHOP, this.state.singData.shop_id);
   }
 
   render() {

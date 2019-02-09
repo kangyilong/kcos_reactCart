@@ -7,15 +7,24 @@ import RemShop from '../remUserShop/remShop';
 import { Table, Button, message } from 'antd';
 import ShopCartList from './shopCartList';
 import UserShopTotal from './userShopTotal';
+import { getUserCarData } from '../../reduxs/action';
 import { wantShopData } from '../../api/shopApi';
-import {toHeavyFn} from "../../comment/methods/util";
+import { toHeavyFn, isLogin, getUserId } from "../../comment/methods/util";
 
 import './userShopCart.scss';
 
 function mapStateToProps(state) {
   return {
-    shopTotal: state.changeSingSum
+    cartShopData: state.userCartData
   };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    userCartDataFn(userId) {
+      dispatch(getUserCarData(userId));
+    }
+  }
 }
 
 class UserShopCart extends Component {
@@ -27,47 +36,44 @@ class UserShopCart extends Component {
       totalMsg: {}, // 单选后总价
       totalData: [], // 全选后总价
       cartLength: 0,
-      statements: 'SELECT * FROM shopMsg',
-      statementsCart: 'SELECT * FROM userCart'
+      statements: 'SELECT * FROM shopMsg'
     };
     this.allShopOption = this.allShopOption.bind(this);
   }
   componentWillMount() {
     let hidMsg = message.loading('正努力加载中...');
-    Promise.all([
-      wantShopData({ statements: this.state.statements }),
-      wantShopData({ statements: this.state.statementsCart })
-    ]).then(([res1, res2]) => {
-      let dset = toHeavyFn(res1, 'product_id');
-      dset.length = 8;
-      this.setState({
-        productData: dset,
-        data: res2,
-        totalData: res2,
-        cartLength: res2.length
-      }, hidMsg);
-    });
+    if(isLogin()) {
+      this.props.userCartDataFn(getUserId());
+      Promise.all([
+        wantShopData({ statements: this.state.statements })
+      ]).then(([res1]) => {
+        let dset = toHeavyFn(res1, 'product_id');
+        dset.length = 8;
+        this.setState({
+          productData: dset
+        }, hidMsg);
+      });
+    }else {
+      hidMsg();
+      message.warning('您还未登录哦，即将前往登录页...').then(() => {
+        this.props.history.push('login');
+      });
+    }
   }
   componentWillReceiveProps(nextProps) {
     if(nextProps !== this.props) {
-      let sum = 0, tdata = [], shopTotal = nextProps.shopTotal;
-      this.state.data.forEach(dItem => {
-        shopTotal.forEach(tItem => {
-          if(dItem.shop_id === tItem.shopId) {
-            dItem.shop_val = parseFloat(tItem.singSum) / parseFloat(dItem.shop_pri)
-          }
-        });
-        tdata.push(dItem);
+      this.setState({
+        data: Object.values(nextProps.cartShopData)
       });
-      shopTotal.forEach(item => {
-        sum += parseFloat(item.singSum);
+      let sum = 0;
+      let nextArr = nextProps.cartShopData.filter(item => item.isSelected);
+      nextArr.forEach(item => {
+        sum += parseFloat(item.shop_pri) * item.shop_val;
       });
       this.setState({
-        totalData: tdata,
         totalMsg: {
           total: sum,
-          len: shopTotal.length,
-          isLength: this.state.cartLength === shopTotal.length
+          len: nextArr.length
         }
       });
     }else {
@@ -118,4 +124,4 @@ class UserShopCart extends Component {
     )
   }
 }
-export default connect(mapStateToProps)(UserShopCart);
+export default connect(mapStateToProps, mapDispatchToProps)(UserShopCart);
