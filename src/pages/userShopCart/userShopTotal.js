@@ -5,6 +5,12 @@ import { Button } from 'antd';
 
 import './userShopTotal.scss';
 
+function mapStateToProps(state) {
+  return {
+    cartShopData: state.userCartData
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return {
     selectStatus(seleStatus) {
@@ -17,31 +23,37 @@ class UserShopTotal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      optxt: '全 选',
+      optxt: '取消全选',
       totalMsg: {}
     };
     this.selectAllShop = this.selectAllShop.bind(this);
   }
   componentWillReceiveProps(nextProps) {
+    let shopLen = 0, shopTotal = 0;
+    nextProps.cartShopData.forEach(item => {
+      if(item.isSelected) {
+        shopLen ++;
+        shopTotal += parseFloat(item.shop_pri) * parseFloat(item.shop_val);
+      }
+    });
     this.setState({
-      totalMsg: nextProps.totalMsg,
-      optxt: nextProps.totalMsg.isLength ? '取消全选' : '全 选'
+      totalMsg: {
+        len: shopLen,
+        total: shopTotal
+      },
+      optxt: shopLen === nextProps.cartShopData.length ? '取消全选' : '全 选'
     });
   }
   selectAllShop() {
     if(this.state.optxt === '全 选') {
-      this.props.selectStatus(true);
+      this.props.selectStatus('SELECTED_S');
       this.setState({
         optxt: '取消全选'
-      }, () => {
-        this.props.onChange(true);
       });
     }else {
-      this.props.selectStatus(false);
+      this.props.selectStatus('CANCEL_S');
       this.setState({
         optxt: '全 选'
-      }, () => {
-        this.props.onChange(false);
       });
     }
   }
@@ -61,4 +73,4 @@ class UserShopTotal extends Component {
     );
   }
 }
-export default connect(null, mapDispatchToProps)(UserShopTotal);
+export default connect(mapStateToProps, mapDispatchToProps)(UserShopTotal);

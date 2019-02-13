@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import OptionShopNum from './optionShopNum';
 import { connect } from 'react-redux';
 import { TOGGLE_SHOP } from '../../../reduxs/visibility';
-import { checkShopNumber } from "../../../reduxs/action";
+import { checkShopNumber, removeCartShop } from "../../../reduxs/action";
 import { wantShopData } from "../../../api/shopApi";
 
 function mapStateToProps(state) {
@@ -16,6 +16,9 @@ function mapDispatchToProps(dispatch) {
   return {
     shopTotalFn(type, shopId) {
       dispatch(checkShopNumber(type, shopId));
+    },
+    removeShop(shopId) {
+      dispatch(removeCartShop(shopId));
     }
   }
 }
@@ -82,13 +85,16 @@ class SingCartShop extends Component{
           </div>
         </div>
         <div className="children03">
-          <OptionShopNum  data={ this.state.singData } shopVal={ this.state.shopVal } onChange={ this.getChildData }/>
+          <OptionShopNum data={ this.state.singData } shopVal={ this.state.shopVal } onChange={ this.getChildData }/>
         </div>
         <div className="children04">
           共：<span>{ this.state.shopSum }</span>元
         </div>
         <div className="children05">
-          <Button type="danger" onClick={ () => { this.props.onChange('delete', this.state.singData.shop_id) } }>删除</Button>
+          <Button type="danger" onClick={ () => {
+            this.props.removeShop(this.state.singData.shop_id);
+            this.props.onChange('delete', this.state.singData.shop_id)
+          } }>删除</Button>
         </div>
       </li>
     );

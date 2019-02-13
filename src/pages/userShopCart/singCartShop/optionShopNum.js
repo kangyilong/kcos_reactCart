@@ -1,7 +1,20 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { userSubShop, userAddShop } from '../../../reduxs/action';
 import './opShopNum.scss';
 
-export default class OptionShopNum extends Component {
+function mapDispatchToProps(dispatch) {
+  return {
+    addShopNum(shopId) {
+      dispatch(userAddShop(shopId));
+    },
+    subShopNum(shopId) {
+      dispatch(userSubShop(shopId));
+    }
+  }
+}
+
+class OptionShopNum extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,11 +31,18 @@ export default class OptionShopNum extends Component {
         shopNum: nextProps.shopVal,
         shopPrice: nextProps.data.shop_pri,
         isNeed: false
+      }, () => {
+        setTimeout(() => {
+          this.setState({
+            isNeed: true
+          });
+        }, 16);
       });
     }
   }
   reducShopNum() {
     if(this.state.shopNum > 1) {
+      this.props.subShopNum(this.props.data.shop_id);
       this.state.shopNum --;
       this.setState({
         shopNum: this.state.shopNum
@@ -32,6 +52,7 @@ export default class OptionShopNum extends Component {
     }
   }
   addShopNum() {
+    this.props.addShopNum(this.props.data.shop_id);
     this.state.shopNum ++;
     this.setState({
       shopNum: this.state.shopNum
@@ -49,3 +70,5 @@ export default class OptionShopNum extends Component {
     )
   }
 }
+
+export default connect(null, mapDispatchToProps)(OptionShopNum);

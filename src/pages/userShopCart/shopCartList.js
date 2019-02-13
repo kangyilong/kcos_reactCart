@@ -44,7 +44,7 @@ class ShopCartList extends Component {
     ]).then(([res1, res2]) => {
       let shopNum = res2[0].shop_Num + deleShopVal;
       let statementsUpdate = `UPDATE shopMsg set shop_Num = ${shopNum} WHERE shop_id = '${shopMsg}'`;
-      wantShopData({statements: statementsUpdate}).then(data => {
+      wantShopData({statements: statementsUpdate}).then(() => {
         hidMsg();
         message.success('已成功将该商品从您的购物车中移除');
       }, hidMsg);

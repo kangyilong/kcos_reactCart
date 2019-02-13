@@ -33,12 +33,10 @@ class UserShopCart extends Component {
     this.state = {
       productData: [],
       data: [],
-      totalMsg: {}, // 单选后总价
       totalData: [], // 全选后总价
       cartLength: 0,
       statements: 'SELECT * FROM shopMsg'
     };
-    this.allShopOption = this.allShopOption.bind(this);
   }
   componentWillMount() {
     let hidMsg = message.loading('正努力加载中...');
@@ -70,38 +68,8 @@ class UserShopCart extends Component {
       nextArr.forEach(item => {
         sum += parseFloat(item.shop_pri) * item.shop_val;
       });
-      this.setState({
-        totalMsg: {
-          total: sum,
-          len: nextArr.length
-        }
-      });
     }else {
       return false;
-    }
-  }
-
-  allShopOption(isSelect) {
-    let sum = 0;
-    if(isSelect) { // 全选
-      this.state.totalData.forEach(item => {
-        sum += parseFloat(item.shop_pri) * item.shop_val;
-      });
-      this.setState({
-        totalMsg: {
-          total: sum,
-          len: this.state.data.length,
-          isLength: true
-        }
-      });
-    }else { // 取消全选
-      this.setState({
-        totalMsg: {
-          total: sum,
-          len: 0,
-          isLength: false
-        }
-      });
     }
   }
 
@@ -113,10 +81,7 @@ class UserShopCart extends Component {
           <div className="user-cart">
             <ShopCartList shopData={ this.state.data }/>
           </div>
-          <UserShopTotal
-            onChange={ this.allShopOption }
-            totalMsg={ this.state.totalMsg }
-          />
+          <UserShopTotal />
           <RemShop productData={ this.state.productData }/>
         </div>
         <Footer />

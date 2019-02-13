@@ -1,4 +1,12 @@
-import { SHOP_DET, SELECT_ALL_SHOP, GET_USER_CART, TOGGLE_SHOP } from './visibility';
+import {
+  SHOP_DET,
+  SELECT_ALL_SHOP,
+  GET_USER_CART,
+  TOGGLE_SHOP,
+  ADD_SHOP,
+  SUB_SHOP,
+  REMOVE_SHOP
+} from './visibility';
 import { wantShopData } from '../api/shopApi';
 
 export function getShopDet(productData) { // 获取商品的详情
@@ -44,4 +52,19 @@ export function checkShopNumber(type, shopId) {
 // 购物车全选或取消全选
 export function operationAllShop(seleStatus) {
   return { type: SELECT_ALL_SHOP, seleStatus };
+}
+
+// 购物车加商品
+export function userAddShop(shopId) {
+  return { type: ADD_SHOP, shopId }
+}
+
+// 购物车减商品
+export function userSubShop(shopId) {
+  return { type: SUB_SHOP, shopId }
+}
+
+// 删除商品
+export function removeCartShop(shopId) {
+  return { type: REMOVE_SHOP, shopId }
 }

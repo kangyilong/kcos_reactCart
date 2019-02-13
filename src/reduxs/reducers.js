@@ -1,4 +1,10 @@
-import {SHOP_DET, SELECT_ALL_SHOP, GET_USER_CART, TOGGLE_SHOP } from './visibility';
+import {
+  SHOP_DET,
+  SELECT_ALL_SHOP,
+  GET_USER_CART,
+  TOGGLE_SHOP,
+  ADD_SHOP, SUB_SHOP, REMOVE_SHOP
+} from './visibility';
 import { combineReducers } from 'redux';
 
 // 获取商品详情
@@ -29,15 +35,37 @@ function getUserCartData(state=[], action) {
       return [
         ...state
       ];
-    default:
-      return state;
-  }
-}
-
-function selectAllShop(state = [], action) {
-  switch(action.type) {
     case SELECT_ALL_SHOP:
-      return action.seleStatus;
+      if(action.seleStatus === 'SELECTED_S') {
+        state.map(item => {
+          item.isSelected = true;
+        });
+      }
+      if(action.seleStatus === 'CANCEL_S') {
+        state.map(item => {
+          item.isSelected = false;
+        });
+      }
+      return [
+        ...state
+      ];
+    case ADD_SHOP:
+      state.map(item => {
+        if(item.shop_id === action.shopId) {
+          item.shop_val ++;
+        }
+      });
+      return [ ...state ];
+    case SUB_SHOP:
+      state.map(item => {
+        if(item.shop_id === action.shopId) {
+          item.shop_val --;
+        }
+      });
+      return [ ...state ];
+    case REMOVE_SHOP:
+      let remainShop = state.filter(item => item.shop_id !== action.shopId);
+      return [ ...remainShop ];
     default:
       return state;
   }
@@ -45,7 +73,6 @@ function selectAllShop(state = [], action) {
 
 export default combineReducers({
   shopDet: getShopDet,
-  selectAll: selectAllShop,
   userCartData: getUserCartData
 })
 //
