@@ -46,7 +46,7 @@ class Login extends Component {
       hideMsg();
       if(data[0]) {
         sessionStorage.setItem('isLogin', data[0].user_id);
-        message.success('登录成功！').then(() => {
+        message.success('登录成功！', 1.5).then(() => {
           this.props.history.push(this.state.backUrl);
         });
       } else {

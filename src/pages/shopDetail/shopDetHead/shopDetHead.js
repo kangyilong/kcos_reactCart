@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Button, message } from 'antd';
 import { getQueryString, isLogin } from '../../../comment/methods/util';
-import { mapStateToProps, mapDispatchToProps } from '../../../reduxs/mapDataToProps';
+import { mapStateToProps, mapDispatchToProps } from '../../shopSuccess/mapDataToProps';
 import { wantShopData } from '../../../api/shopApi';
 import './shopDetHead.scss';
 
@@ -172,7 +172,7 @@ class ShopDetHead extends Component {
   }
 
   addCartSuccess(productId, shopId) {
-    message.success('加入购物车成功').then(() => {
+    message.success('加入购物车成功', 1.5).then(() => {
       sessionStorage.setItem('productDet', JSON.stringify({productId, shopId}));
       this.props.history.push('/addShop');
     });
@@ -233,7 +233,7 @@ class ShopDetHead extends Component {
 
   addUserTable(userType, productId, shopId, shopVal, shopPri) {
     if(!isLogin()) {
-      message.warning('请登录后操作').then(() => {
+      message.warning('请登录后操作', 1.5).then(() => {
         sessionStorage.setItem('backUrl', `shopDet?productId=${productId}`);
         this.props.history.push('login');
       });

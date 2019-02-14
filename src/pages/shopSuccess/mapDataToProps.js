@@ -1,4 +1,4 @@
-import { getShopDetData } from "./action";
+import { getShopDetData } from "../../reduxs/action";
 
 export function mapStateToProps(state) {
   return {

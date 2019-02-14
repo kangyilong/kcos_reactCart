@@ -6,7 +6,7 @@ import RemShop from '../remUserShop/remShop';
 import { Button, message } from 'antd';
 import { wantShopData } from '../../api/shopApi';
 import { toHeavyFn } from "../../comment/methods/util";
-import { mapStateToProps, mapDispatchToProps } from '../../reduxs/mapDataToProps';
+import { mapStateToProps, mapDispatchToProps } from './mapDataToProps';
 
 import './shopSuccess.scss';
 

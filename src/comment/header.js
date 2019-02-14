@@ -87,7 +87,7 @@ class Header extends Component {
               <div className="line"></div>
               <div className="u-right" onClick={ () => {
                 if(!isLogin()) {
-                  message.warning('还未登录哦，请登录').then(() => {
+                  message.warning('还未登录哦，请登录', 1.5).then(() => {
                     this.props.history.push('/login');
                   });
                 }else {

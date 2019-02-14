@@ -53,7 +53,7 @@ class UserShopCart extends Component {
       });
     }else {
       hidMsg();
-      message.warning('您还未登录哦，即将前往登录页...').then(() => {
+      message.warning('您还未登录哦，即将前往登录页...', 1.5).then(() => {
         this.props.history.push('login');
       });
     }

@@ -33,10 +33,6 @@ class ShopDetCon extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-
-  }
-
   // 选择商品查看详情
   onClickShopFn(that, e) {
     let target = e.target;

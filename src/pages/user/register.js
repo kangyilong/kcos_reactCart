@@ -53,7 +53,7 @@ export default class Register extends Component {
     wantShopData({statements, parameter}).then(data => {
       hideMsg();
       if(data.msg === 'ok') {
-        message.success('注册成功').then(() => {
+        message.success('注册成功', 1.5).then(() => {
           sessionStorage.setItem('isLogin', userId);
           this.props.history.push(this.state.backUrl);
         });
