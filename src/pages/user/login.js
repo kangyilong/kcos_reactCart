@@ -71,7 +71,11 @@ class Login extends Component {
             </div>
             <div className="paw-box">
               <label htmlFor="paw">密 码：</label>
-              <Input type="password" id="paw" required/>
+              <Input type="password" id="paw" required onKeyDown={ (ev) => {
+                if(ev.keyCode === 13) {
+                  this.loginOperation();
+                };
+              } }/>
             </div>
             <div className="foo-btn">
               <Button onClick={ this.resetOperation }>重置</Button>

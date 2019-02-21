@@ -27,4 +27,19 @@ code {
 .none{
   display: none !important;
 }
+.fz_16{
+  font-size: 16px;
+}
+.fz_17{
+  font-size: 17px;
+}
+.fz_18{
+  font-size: 18px;
+}
+.no-select{
+  user-select: none;
+}
+.elm_flex{
+  display: flex;
+}
 

@@ -15,7 +15,12 @@ export function getShopDet(productData) { // 获取商品的详情
 
 export function getShopDetData(productId, shopId) {
   return (dispatch) => {
-    let statements = `SELECT * FROM shopMsg where product_id="${ productId }" and shop_id="${ shopId }"`;
+    let statements = null;
+    if(productId) {
+      statements = `SELECT * FROM shopMsg where product_id="${ productId }" and shop_id="${ shopId }"`;
+    }else {
+      statements = `SELECT * FROM shopMsg where shop_id="${ shopId }"`;
+    }
     wantShopData({ statements }).then(data => {
       dispatch(getShopDet(data));  // 数据请求成功后dispatch getShopDet，从而在getShopDet中拿到请求成功后数据
     });

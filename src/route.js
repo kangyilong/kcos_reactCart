@@ -36,6 +36,9 @@ let ComponentData = [
   }, {
     path: '/shopCart',
     component: AsyncComponent(() => import('./pages/userShopCart/userShopCart'))
+  }, {
+    path: '/userOrder',
+    component: AsyncComponent(() => import('./pages/user/order/order'))
   }
 ];
 

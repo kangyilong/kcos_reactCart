@@ -91,7 +91,8 @@ class ShopDetHead extends Component {
           });
         }else {
           this.setState({
-            collectionTxt: '加入收藏'
+            collectionTxt: '加入收藏',
+            isCollection: true
           })
         }
       }, hisMsg);
