@@ -31,6 +31,7 @@ class UserShopCart extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      u_login: null,
       productData: [],
       data: [],
       totalData: [], // 全选后总价
@@ -38,25 +39,29 @@ class UserShopCart extends Component {
       statements: 'SELECT * FROM shopMsg'
     };
   }
-  componentWillMount() {
+  async componentWillMount() {
     let hidMsg = message.loading('正努力加载中...');
-    if(isLogin()) {
-      this.props.userCartDataFn(getUserId());
-      Promise.all([
-        wantShopData({ statements: this.state.statements })
-      ]).then(([res1]) => {
-        let dset = toHeavyFn(res1, 'product_id');
-        dset.length = 8;
-        this.setState({
-          productData: dset
-        }, hidMsg);
-      });
-    }else {
-      hidMsg();
-      message.warning('您还未登录哦，即将前往登录页...', 1.5).then(() => {
-        this.props.history.push('login');
-      });
-    }
+    this.setState({
+      u_login: !!(await isLogin()).length
+    }, () => {
+      if(this.state.u_login) {
+        this.props.userCartDataFn(getUserId());
+        Promise.all([
+          wantShopData({ statements: this.state.statements })
+        ]).then(([res1]) => {
+          let dset = toHeavyFn(res1, 'product_id');
+          dset.length = 8;
+          this.setState({
+            productData: dset
+          }, hidMsg);
+        });
+      }else {
+        hidMsg();
+        message.warning('您还未登录哦，即将前往登录页...', 1.5).then(() => {
+          this.props.history.push('login');
+        });
+      }
+    });
   }
   componentWillReceiveProps(nextProps) {
     if(nextProps !== this.props) {

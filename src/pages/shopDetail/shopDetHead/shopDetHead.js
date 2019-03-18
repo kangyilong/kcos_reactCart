@@ -12,6 +12,7 @@ class ShopDetHead extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      u_login: null,
       userId: sessionStorage.getItem('isLogin'),
       shopMsgData: [],
       defaultImg: null,
@@ -25,62 +26,64 @@ class ShopDetHead extends Component {
       addShopVal: 0,
       isCollection: true,
       isOper: true,
-      productId: getQueryString('productId'), // 产品ID
-      statements: `SELECT * FROM shopMsg where product_id="${ getQueryString('productId') }"`,
+      productId: getQueryString('productId') // 产品ID
     };
     this.addShopCartFn = this.addShopCartFn.bind(this);
     this.addCollectionFn = this.addCollectionFn.bind(this);
   }
 
-  componentWillMount() {
-    wantShopData({ statements: this.state.statements }).then(data => {
-      this.setState({
-        shopMsgData: data,
-        defaultImg: data[0].shop_pic,
-        defaultInv: data[0].shop_Num,
-        productName: data[0].shop_name,
-        productPri: data[0].shop_pri,
-        productTxt: data[0].shop_txt,
-        shopId: data[0].shop_id
-      }, () => {
-        this.isJudgeShop();
-      });
+  async componentWillMount() {
+    this.setState({
+      u_login: !!(await isLogin()).length
+    });
+    this.props.getShopDetail(this.state.productId);
+  }
+
+  componentWillReceiveProps(newProps) {
+    let shopDet = Object.values(newProps.shopDet);
+    this.setState({
+      shopMsgData: shopDet,
+      defaultImg: shopDet[0].shop_pic,
+      defaultInv: shopDet[0].shop_Num,
+      productName: shopDet[0].shop_name,
+      productPri: shopDet[0].shop_pri,
+      productTxt: shopDet[0].shop_txt,
+      shopId: shopDet[0].shop_id
+    }, () => {
+      this.isJudgeShop();
     });
   }
 
-  shouldComponentUpdate(nowProps) { // 加入购物车操作成功后，库存数量减一
-    if(!(nowProps === this.props)) {
-      // 先查到商品的库存数量 this.state.addShopVal
-      let allStatements = `select * from shopMsg where product_id=? and shop_id=?`;
-      let allParameter = JSON.stringify([
+  changeShopNumber = () => {
+    // 先查到商品的库存数量 this.state.addShopVal
+    let allStatements = `select * from shopMsg where product_id=? and shop_id=?`;
+    let allParameter = JSON.stringify([
+      this.state.productId,
+      this.state.shopId
+    ]);
+    wantShopData({ statements: allStatements, parameter: allParameter }).then(data => {
+      // 查询成功后再进行更新数据操作
+      let remainNum = data[0].shop_Num - 1; // 总数量 - 加入购物车数量
+      let statements = `update shopMsg set shop_Num=? where product_id=? and shop_id=?`;
+      let parameter = JSON.stringify([
+        remainNum,
         this.state.productId,
         this.state.shopId
       ]);
-      wantShopData({ statements: allStatements, parameter: allParameter }).then(data => {
-        // 查询成功后再进行更新数据操作
-        let remainNum = data[0].shop_Num - 1; // 总数量 - 加入购物车数量
-        let statements = `update shopMsg set shop_Num=? where product_id=? and shop_id=?`;
-        let parameter = JSON.stringify([
-          remainNum,
-          this.state.productId,
-          this.state.shopId
-        ]);
-        wantShopData({ statements, parameter }).then(data => {
-          // 更新库存成功
-          if(data.msg === 'ok') {
-            this.state.defaultInv --;
-            this.setState({
-              defaultInv: this.state.defaultInv
-            });
-          }
-        });
+      wantShopData({ statements, parameter }).then(data => {
+        // 更新库存成功
+        if(data.msg === 'ok') {
+          this.state.defaultInv --;
+          this.setState({
+            defaultInv: this.state.defaultInv
+          });
+        }
       });
-    }
-    return nowProps;
-  }
+    });
+  };
 
   isJudgeShop() { // 判断该商品是否被收藏
-    if(isLogin()) {
+    if(this.state.u_login) {
       let hisMsg = message.loading('');
       wantShopData(this.queryParams('userCollection')).then(data => {
         hisMsg();
@@ -152,7 +155,6 @@ class ShopDetHead extends Component {
               ]);
               wantShopData({ statements, parameter }).then(data => {
                 hisMsg();
-                this.props.getShopSuccessData(this.state.productId, this.state.shopId);
                 if(data.msg === 'ok') {
                   this.addCartSuccess(productId, shopId);
                 }
@@ -161,13 +163,13 @@ class ShopDetHead extends Component {
           } else {
             wantShopData(params).then(data => {
               hisMsg();
-              this.props.getShopSuccessData(this.state.productId, this.state.shopId);
               if(data.msg === 'ok') {
                 this.addCartSuccess(productId, shopId);
               }
             }, hisMsg);
           }
         });
+        this.changeShopNumber();
       }
     }
   }
@@ -184,7 +186,7 @@ class ShopDetHead extends Component {
       this.setState({
         isOper: false
       });
-      let hisMsg = message.loading('请稍后...');
+      let hisMsg = message.loading('请稍后...', 1.5);
       if(this.state.isCollection) {
         let params = this.addUserTable('userCollection', this.state.productId, this.state.shopId);
         if(params) {
@@ -233,7 +235,7 @@ class ShopDetHead extends Component {
   }
 
   addUserTable(userType, productId, shopId, shopVal, shopPri) {
-    if(!isLogin()) {
+    if(!this.state.u_login) {
       message.warning('请登录后操作', 1.5).then(() => {
         sessionStorage.setItem('backUrl', `shopDet?productId=${productId}`);
         this.props.history.push('login');

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, Dropdown, Icon, message } from 'antd';
 import { withRouter } from 'react-router-dom';
-import { isLogin, outLogin } from './methods/util';
+import { isLogin, outLogin } from '../../../comment/methods/util';
 
-import './header.scss';
+import './style/personal_header.scss';
 
 const aboutCompany = (  // 关于公司
   <Menu>
@@ -46,7 +46,7 @@ const newsCenter = (  // 新闻中心
   </Menu>
 );
 
-class Header extends Component {
+class PersonalHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -58,54 +58,34 @@ class Header extends Component {
       u_login: !!(await isLogin()).length
     })
   }
-
-  goPersonal = () => {
-    if(!this.state.u_login) {
-      message.warning('还未登录哦，请登录', 1.5).then(() => {
-        this.props.history.push('/login');
-      });
-    }else {
-      this.props.history.push('/personal-index');
-    }
-  };
-
-  personal = (  // 个人中心
-    <Menu>
-      <Menu.Item>
-      <span onClick={ this.goPersonal }>个人中心</span>
-      </Menu.Item>
-      <Menu.Item>
+  render() {
+    const personal = (  // 个人中心
+      <Menu>
+        <Menu.Item>
+      <span onClick={
+        () => {
+          if(!this.state.u_login) {
+            message.warning('还未登录哦，请登录', 1.5).then(() => {
+              this.props.history.push('/login');
+            });
+          }else {
+            this.props.history.push('/personal-index');
+          }
+        }
+      }>个人中心</span>
+        </Menu.Item>
+        <Menu.Item>
           <span
             style={{'color': '#f5222d'}}
-            onClick={() => {
-              outLogin()
-            }}
+            onClick={
+              () => { outLogin() }
+            }
           >退 出</span>
-      </Menu.Item>
-    </Menu>
-  );
-
-  LongoHeader = () => {
-    if(this.state.u_login) {
-      return (
-        <Dropdown overlay={ this.personal }>
-          <div className="u-right">
-            <span><Icon type="user" /></span>
-          </div>
-        </Dropdown>
-      )
-    }else {
-      return (
-        <div className="u-right">
-          <span onClick={ this.goPersonal }><Icon type="user" /></span>
-        </div>
-      )
-    }
-  };
-
-  render() {
+        </Menu.Item>
+      </Menu>
+    );
     return (
-      <div className="header">
+      <div className="personal-header wb">
         <header>
           <div className="nav-box">
             <div className="nav-left">
@@ -139,9 +119,21 @@ class Header extends Component {
                 </li>
               </ul>
               <div className="line"></div>
-              {
-                this.LongoHeader()
-              }
+              <div className="u-right elm_flex">
+                <Dropdown overlay={ personal }>
+                  <p>
+                    <Icon type="user" />
+                    <span className="name">ksy</span>
+                  </p>
+                </Dropdown>
+                <p>
+                  <Icon type="shopping-cart" />
+                  <span className="cart" onClick={() => {
+                    this.props.history.push('/shopCart');
+                  }}>购物车</span>
+                </p>
+              </div>
+
             </div>
           </div>
         </header>
@@ -149,4 +141,4 @@ class Header extends Component {
     );
   }
 }
-export default withRouter(Header);
+export default withRouter(PersonalHeader);

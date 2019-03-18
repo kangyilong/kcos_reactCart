@@ -39,24 +39,12 @@ let ComponentData = [
   }, {
     path: '/userOrder',
     component: AsyncComponent(() => import('./pages/user/order/order'))
-  }
-];
-
-/*
-, {
-    path: '/register',
-    component: AsyncComponent(() => import('./pages/user/register'))
-  }, {
-    path: '/login',
-    component: AsyncComponent(() => import('./pages/user/login'))
   }, {
     path: '/personal-index',
     component: AsyncComponent(() => import('./pages/user/personal/index'))
-  }, {
-  path: '/demoIndex',
-    component: AsyncComponent(() => import('./pages/demo/index'))
-}
-*/
+  }
+];
+
 
 function comRoute() {
   return ComponentData.map((item) => <Route exact key={item.path} path={item.path} component={item.component}/>)

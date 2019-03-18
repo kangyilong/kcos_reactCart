@@ -1,0 +1,26 @@
+.personal-left{
+  width: 100%;
+  min-height: 400px;
+  padding: 30px 0px 60px 0px;
+  .p-title{
+    margin-bottom: 10px;
+    padding-left: 40px;
+  }
+  .left-ul{
+    li{
+      padding: 15px 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+      a{
+        padding-left: 50px;
+        display: block;
+      }
+      &:hover {
+        color: #62a8ea;
+      }
+    }
+    .selected {
+      color: #62a8ea;
+    }
+  }
+}

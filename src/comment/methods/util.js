@@ -1,3 +1,6 @@
+import { wantShopData } from '../../api/shopApi';
+import cityData from './city';
+
 // 获取元素ID
 export function getElementFn(id) {
   return document.getElementById(id);
@@ -15,13 +18,20 @@ export function getQueryString(name, search) {
 }
 
 // 判断是否登录
-export function isLogin() {
-  return !!sessionStorage.getItem('isLogin');
+export async function isLogin() {
+  let userId = sessionStorage.getItem('isLogin');
+  let statements = `SELECT * FROM userMsg WHERE user_id = '${userId}'`;
+  return await wantShopData({statements});
 }
 
 // 获取用户ID
 export function getUserId() {
   return sessionStorage.getItem('isLogin');
+}
+
+// 退出登录
+export function outLogin() {
+  sessionStorage.clear();
 }
 
 // 数组中对象取相同id的一条数据
@@ -33,11 +43,60 @@ export function toHeavyFn(data, id) {
     for(i; i < len; i ++) {
       if(!obj[data[i][id]]) {
         arr.unshift(data[i]);
-        obj[data[i][id]] = i;
+        obj[data[i][id]] = `${i}`;
       }
     }
     return arr;
   }else {
     return '';
   }
+}
+
+// 将数组中对象相同id的合并为对象中一项
+export function toMergeFn(data, id) {
+  if(Array.isArray(data)) {
+    let i = 0, len = data.length;
+    let targetObj = {};
+    let obj = {};
+    for(i; i < len; i ++) {
+      if(!obj[data[i][id]]) {
+        targetObj['option'+i] = [...data[i]];
+        obj[data[i][id]] = `${i}`;
+      }else {
+        targetObj['option'+i] = [data[i], ...targetObj['option'+i]];
+      }
+    }
+    return targetObj;
+  }
+  return 'NOT ARRAY';
+}
+
+// 处理城市信息
+export function getCityData() {
+  cityData.map(pItem => {
+    let name = pItem['name'];
+    pItem['label'] = name;
+    pItem['value'] = name;
+    if(pItem['sub']) {
+      pItem['children'] = pItem['sub'].map(cItem => {
+        cItem['label'] = cItem['name'];
+        cItem['value'] = cItem['name'];
+        if(cItem['sub']) {
+          cItem['children'] = cItem['sub'].map(item => {
+            item['label'] = item['name'];
+            item['value'] = item['name'];
+            delete item['sub'];
+            delete item['name'];
+            return item;
+          })
+        }
+        delete cItem['sub'];
+        delete cItem['name'];
+        return cItem;
+      })
+    }
+    delete pItem['sub'];
+    return pItem;
+  });
+  return cityData;
 }

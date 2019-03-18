@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { userSubShop, userAddShop } from '../../../reduxs/action';
 import './opShopNum.scss';
 import {wantShopData} from "../../../api/shopApi";
+import {getUserId} from "../../../comment/methods/util";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -55,7 +56,6 @@ class OptionShopNum extends Component {
     }
   }
   addShopNum() {
-    console.log(this.props.data);
     this.props.addShopNum(this.props.data.shop_id);
     this.state.shopNum ++;
     this.setState({
@@ -65,7 +65,8 @@ class OptionShopNum extends Component {
       this.props.onChange(this.state.shopNum, this.state.shopPrice);
     });
   }
-  updaterShopInventory(optionType) {
+  updaterShopInventory(optionType) { // 更新商品总库存
+    this.updaterShopCartNum();
     // 先查到商品的库存数量 this.state.addShopVal
     let allStatements = `select * from shopMsg where product_id=? and shop_id=?`;
     let allParameter = JSON.stringify([
@@ -89,6 +90,15 @@ class OptionShopNum extends Component {
       ]);
       wantShopData({ statements, parameter }).then(() => {});
     });
+  }
+  updaterShopCartNum() { // 更新购物车商品中数量 this.state.shopNum
+    let statements = `update userCart set shop_val=? where user_id=? and shop_id=?`;
+    let parameter = JSON.stringify([
+      this.state.shopNum,
+      getUserId(),
+      this.props.data.shop_id
+    ]);
+    wantShopData({ statements, parameter }).then(() => {});
   }
   render() {
     return (

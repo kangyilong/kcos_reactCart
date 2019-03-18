@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, message, Modal, Select, Input } from 'antd';
+import { Button, message, Input, Modal } from 'antd';
 import { getShopDetData } from '../../../reduxs/action';
 import { wantShopData } from "../../../api/shopApi";
 import { isLogin } from "../../../comment/methods/util";
 import Header from '../../../comment/header';
 import Footer from '../../../comment/footer';
-
+import AddRess from './orderChild/OrderAddRess';
 import './order.scss';
 
-const Option = Select.Option;
+const { confirm } = Modal;
 
 function mapStateToProps(state) {
   return {
@@ -19,8 +19,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    singShopMsg(productId, shopId) {
-      dispatch(getShopDetData(productId, shopId))
+    singShopMsg(shopItem) {
+      dispatch(getShopDetData(shopItem.product_id, shopItem.shop_id))
     }
   }
 }
@@ -30,44 +30,50 @@ class UserOrder extends Component{
     super(props);
     this.state = {
       orderCode: sessionStorage.getItem('orderCode'),
-      shopMsg: [],
+      shopMsg: [], // 商品详情
       orderShop: [],
+      cityOptions: [],
       shopIndex: 0,
       orderMsg: {},
       zx_type: false,
       hd_type: false,
       kd_type: false,
       jj_type: false,
-      visible: false
+      visible: false,
+      u_login: null
     };
   }
-  componentWillMount() {
+  async componentWillMount() {
     let hisMsg = message.loading('加载中...');
-    if(!isLogin()) {
-      hisMsg();
-      message.warning('还未登录哦，请先登录', 1.5).then(() => {
-        this.props.history.push('login');
-      });
-      return;
-    }
-    Promise.all([
-      wantShopData({ statements: `select * from userOrder where code='${ this.state.orderCode }'` }),
-      wantShopData({ statements: `select * from orderMsg where p_code='${ this.state.orderCode }'` })
-    ]).then(([data1, data2]) => {
-      hisMsg();
-      this.setState({
-        orderMsg: data1[0],
-        orderShop: data2,
-        zx_type: data1[0].zf_type === '1' ? true : false,
-        hd_type: data1[0].zf_type === '2' ? true : false,
-        kd_type: data1[0].ps_type === '1' ? true : false,
-        jj_type: data1[0].ps_type === '2' ? true : false
-      }, () => {
-        this.state.orderShop.forEach(item => {
-          this.props.singShopMsg(item.product_id, item.shop_id);
+    this.setState({
+      u_login: !!(await isLogin()).length
+    }, () => {
+      if(!this.state.u_login) {
+        hisMsg();
+        message.warning('还未登录哦，请先登录', 1.5).then(() => {
+          this.props.history.push('login');
         });
-      });
-    }, hisMsg);
+        return;
+      }
+      Promise.all([
+        wantShopData({ statements: `select * from userOrder where code='${ this.state.orderCode }'` }),
+        wantShopData({ statements: `select * from orderMsg where p_code='${ this.state.orderCode }'` })
+      ]).then(([data1, data2]) => {
+        hisMsg();
+        if(data1.length > 0) {
+          this.setState({
+            orderMsg: data1[0],
+            orderShop: data2,
+            zx_type: data1[0].zf_type === '1' ? true : false,
+            hd_type: data1[0].zf_type === '2' ? true : false,
+            kd_type: data1[0].ps_type === '1' ? true : false,
+            jj_type: data1[0].ps_type === '2' ? true : false
+          }, () => {
+            this.orderShopMsg(this.state.orderShop, this.props.singShopMsg);
+          });
+        }
+      }, hisMsg);
+    });
   }
   shouldComponentUpdate(nextProps) {
     if(nextProps.shopDet !== this.props.shopDet) {
@@ -78,8 +84,6 @@ class UserOrder extends Component{
       this.state.shopIndex ++;
       this.setState({
         shopMsg: this.state.shopMsg
-      }, () => {
-        console.log(this.state.shopMsg);
       });
     }
     return true;
@@ -118,19 +122,49 @@ class UserOrder extends Component{
         break;
     }
   }
-  showModal = () => {
-    this.setState({
-      visible: true,
+  cancelOrder = async (shopItem) => {
+    /*
+    * 取消订单
+    * 取消后库中商品总数量加上订单数量
+    * delete from tb (where)
+    * */
+    let { shop_Num, shop_val, shop_id } = shopItem;
+    let remainNum = shop_Num + shop_val;
+    let statements = `update shopMsg set shop_Num=? where shop_id=?`; // 更新商品数
+    let parameter = JSON.stringify([
+      remainNum,
+      shop_id
+    ]);
+    await wantShopData({ statements, parameter });
+  };
+
+  showConfirm = () => {
+    const _this = this;
+    confirm({
+      title: '取消订单',
+      content: '心意已决，确定取消订单?',
+      onOk() {
+        // 取消订单--将该订单在订单表中的状态改为已取消
+        let hasMsg = message.loading('');
+        let o_parameter = JSON.stringify([ _this.state.orderCode ]);
+        let u_statements = `update userOrder set o_status='已取消' where code = ?`;
+        Promise.all([
+          wantShopData({statements: u_statements, parameter: o_parameter})
+        ]);
+        _this.orderShopMsg(_this.state.shopMsg, _this.cancelOrder);
+        hasMsg();
+        message.success('订单取消成功', 1.5).then(() => {
+          _this.props.history.push('/home');
+        });
+      },
+      okText: '确定',
+      cancelText: '取消'
     });
   };
-  handleOk = (e) => {
-    this.setState({
-      visible: false,
-    });
-  };
-  handleCancel = (e) => {
-    this.setState({
-      visible: false,
+
+  orderShopMsg = (data, optionFn) => {
+    data.forEach(item => {
+      optionFn(item);
     });
   };
 
@@ -194,15 +228,7 @@ class UserOrder extends Component{
               </div>
             </div>
             <div className="address-box">
-              <div className="address-head o_flex">
-                <div className="left">
-                  <b>收货地址</b>
-                </div>
-                <div className="right no-select">
-                  <span onClick={this.showModal}>添加地址</span>
-                </div>
-              </div>
-              <div className="address-con"></div>
+              <AddRess o_code={this.state.orderCode}/>
             </div>
             <div className="user-msg">
               <textarea placeholder="说点什么吧~"></textarea>
@@ -213,43 +239,16 @@ class UserOrder extends Component{
               <p>共 <span className="show-red fz_18">{ this.state.orderMsg.shop_sum }</span> 件商品，合计：<span className="show-red fz_17">{ this.state.orderMsg.shop_total }元</span></p>
             </div>
             <div className="foo-right">
-              <Button>再想想，取消订单</Button>
+              <Button onClick={() => {
+                this.showConfirm();
+              }}>再想想，取消订单</Button>
               <Button type="primary">确认订单</Button>
             </div>
           </div>
         </div>
         <Footer />
         <div>
-          <Modal
-            title="添加收货地址"
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-          >
-            <div style={{ 'marginBottom': '15px' }}>
-              <label htmlFor="sj_name">收件人：</label>
-              <Input type="text" id="sj_name" style={{ width: '80%' }}/>
-            </div>
-            <div style={{ 'marginBottom': '15px' }}>
-              <label htmlFor="dh_name">手机号：</label>
-              <Input type="text" id="dh_name" style={{ width: '80%' }}/>
-            </div>
-            <div>
-              <label>收货地址：</label>
-              <Select style={{ width: 105, 'margin-right': '20px' }}>
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-              </Select>
-              <Select style={{ width: 105, 'margin-right': '20px' }}>
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-              </Select>
-              <Select style={{ width: 105 }}>
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-              </Select>
-            </div>
-          </Modal>
+
         </div>
       </div>
     )

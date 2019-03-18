@@ -1,72 +1,66 @@
-h1,h2,h3,h4,h5,p,ul,li{
-    margin: 0;
-    padding: 0;
-}
-li{
-    list-style: none;
-}
-a{
-    text-decoration: none;
-    color: #333;
-}
-.nav-box{
+.personal-header{
+  width: 100%;
+  margin: 0 auto;
+  .nav-box{
     width: 100%;
     height: 66px;
-    background-color: #101010;
     display: flex;
     text-align: center;
-    color: #fff;
-}
-.nav-left{
-    width: 22%;
+  }
+  .nav-left{
+    width: 12%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     text-align: center;
     line-height: 66px;
-}
-.nav-left>a{
+  }
+  .nav-left>a{
     display: inline-block;
     height: 60%;
-}
-.nav-left>img{
+  }
+  .nav-left>img{
     height: 100%;
-}
-.nav-right{
-    width: 76%;
+  }
+  .nav-right{
+    width: 88%;
     display: flex;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     align-items: center;
-}
-.nav-ul{
+  }
+  .nav-ul{
     display: block;
     display: flex;
     align-items: center;
-    width: 92%;
+    width: 78%;
     margin: 0;
     height: 100%;
-}
-.nav-ul>li{
+  }
+  .nav-ul>li{
     width: 16%;
     margin: 0 1%;
     height: 100%;
-}
-.nav-ul>li>a{
+  }
+  .nav-ul>li>a{
     display: block;
     line-height: 66px;
-    font-size: 16px;
-    color: #fff;
-}
-.line{
-    width: 2px;
-    height: 40%;
-    background-color: #fff;
-}
-.u-right{
+    font-size: 15px;
+  }
+  .line{
+    background-color: #999;
+  }
+  .u-right{
     cursor: pointer;
-    font-size: 18px;
-    width: 5%;
-    text-align: right;
+    font-size: 16px;
+    width: 19%;
+    margin-left: 30px;
+    .name{
+      margin: 0 45px 0 10px;
+    }
+    .cart{
+      margin-left: 10px;
+    }
+  }
 }

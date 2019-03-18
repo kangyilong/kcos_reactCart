@@ -27,7 +27,8 @@ class UserShopTotal extends Component {
     super(props);
     this.state = {
       optxt: '取消全选',
-      totalMsg: {}
+      totalMsg: {},
+      userId: getUserId()
     };
     this.selectAllShop = this.selectAllShop.bind(this);
     this.userOrderFn = this.userOrderFn.bind(this);
@@ -62,34 +63,44 @@ class UserShopTotal extends Component {
     }
   }
   userOrderFn() {
+    /*
+    * 生成待付款订单
+    * 生成订单后购物车中商品除去
+    * 增加数据：insert into 表名 (字段1,字段2,字段3) values (?,?,?)
+    * */
     let hisMsg = message.loading('正为您生成订单，请稍等...');
     let orderShop = this.props.cartShopData.filter(item => item.isSelected);
     let p_code = 'kcos1314_o' + new Date().getTime() + Math.floor(Math.random() * 1000);
     orderShop.forEach(item => {
-      let statement = `insert into orderMsg (order_code,user_id,shop_id,shop_pri,shop_val,p_code) values (?,?,?,?,?,?)`;
+      // 生成详情订单语句
+      let statement = `insert into orderMsg (order_code,shop_id,shop_pri,shop_val,p_code) values (?,?,?,?,?)`;
       let params = JSON.stringify([
         'kcos1314_Od' + new Date().getTime() + Math.floor(Math.random() * 10000),
-        getUserId(),
         item.shop_id,
         item.shop_pri,
         item.shop_val,
         p_code
       ]);
-      wantShopData({ statements: statement, parameter: params }).then(() => {});
+      // 去除生成订单的商品
+      let p_statements = `delete from userCart where shop_id='${item.shop_id}' and user_id='${this.state.userId}'`;
+      Promise.all([
+        wantShopData({ statements: statement, parameter: params }),
+        wantShopData({ statements: p_statements })
+      ])
     });
-    /*
-    * 生成待付款订单
-    * 增加数据：insert into 表名 (字段1,字段2,字段3) values (?,?,?)
-    * */
-    let statements = `insert into userOrder (code,user_id,shop_total,shop_sum,o_status,zf_type,ps_type) values (?,?,?,?,?,?,?)`;
+
+    // 生成主订单语句
+    let o_time = new Date().getTime().toString();
+    let statements = `insert into userOrder (code,user_id,shop_total,shop_sum,o_status,zf_type,ps_type,o_time) values (?,?,?,?,?,?,?,?)`;
     let parameter = JSON.stringify([
       p_code,
-      getUserId(),
+      this.state.userId,
       this.state.totalMsg.total.toFixed(2),
       this.state.totalMsg.len,
       '待付款',
       '1',
-      '1'
+      '1',
+      o_time
     ]);
     wantShopData({ statements, parameter }).then(data => {
       hisMsg();

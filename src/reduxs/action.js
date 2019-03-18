@@ -16,8 +16,10 @@ export function getShopDet(productData) { // 获取商品的详情
 export function getShopDetData(productId, shopId) {
   return (dispatch) => {
     let statements = null;
-    if(productId) {
+    if(productId && shopId) {
       statements = `SELECT * FROM shopMsg where product_id="${ productId }" and shop_id="${ shopId }"`;
+    }else if(productId) {
+      statements = `SELECT * FROM shopMsg where product_id="${ productId }"`;
     }else {
       statements = `SELECT * FROM shopMsg where shop_id="${ shopId }"`;
     }

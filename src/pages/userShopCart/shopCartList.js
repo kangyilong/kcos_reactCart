@@ -16,7 +16,7 @@ class ShopCartList extends Component {
     this.operationSingle = this.operationSingle.bind(this);
   }
   componentWillReceiveProps(nextProps) {
-    if(this.state.isNeed) { // 防止数据在每次改变是重复渲染
+    if(this.state.isNeed && nextProps.shopData.length > 0) { // 防止数据在每次改变是重复渲染
       this.setState({
         shopData: nextProps.shopData,
         isNeed: false

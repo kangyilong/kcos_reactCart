@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { wantShopData } from "../../../api/shopApi";
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { getQueryString, toHeavyFn } from '../../../comment/methods/util';
+import { mapStateToProps, mapDispatchToProps } from '../../shopSuccess/mapDataToProps';
 
 import './shopDetCon.scss';
 
@@ -38,7 +40,7 @@ class ShopDetCon extends Component {
     let target = e.target;
     let productId = target.getAttribute('data-id');
     that.props.history.push(`/shopDet?productId=${ productId }`);
-    window.location.reload();
+    that.props.getShopDetail(productId);
   }
 
   render() {
@@ -83,4 +85,4 @@ class ShopDetCon extends Component {
   }
 }
 
-export default withRouter(ShopDetCon);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ShopDetCon));
