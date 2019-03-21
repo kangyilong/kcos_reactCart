@@ -37,7 +37,7 @@ export default class Consumption extends Component <props, any> {
                   return (
                       <span
                           style={{'color': '#1890ff', 'cursor': 'pointer'}}
-                          onClick={this.showModal.bind(this, value)}
+                          onClick={() => {this.showModal(value)}}
                       >查看商品</span>
                   )
               }
@@ -55,7 +55,8 @@ export default class Consumption extends Component <props, any> {
       },
       moneyTextRef: {
           value: ''
-      }
+      },
+      isShow: false
   };
 
     getUserRunning = () => {
@@ -84,14 +85,18 @@ export default class Consumption extends Component <props, any> {
         })
     };
 
-    showModal(value: string) {
+    showModal = (value: string) => {
         this.setState({
-            visible: true,
-            orderCode: value
+            orderCode: value,
+            isShow: !this.state.isShow
         }, () => {
-            requestAnimationFrame(() => {
-                let antModal: any = document.querySelector('.ant-modal');
-                antModal.style.width = '800px';
+            this.setState({
+                visible: true
+            }, () => {
+                requestAnimationFrame(() => {
+                    let antModal: any = document.querySelector('.ant-modal');
+                    antModal.style.width = '800px';
+                });
             });
         });
     };
@@ -172,7 +177,7 @@ export default class Consumption extends Component <props, any> {
               okText="确定"
               cancelText="取消"
           >
-              <RunShopDetail orderCode={this.state.orderCode}/>
+              <RunShopDetail orderCode={this.state.orderCode} isShow={this.state.isShow}/>
           </Modal>
           <Modal
               title="账户充值"

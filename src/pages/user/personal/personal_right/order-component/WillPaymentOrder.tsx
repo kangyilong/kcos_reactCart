@@ -46,7 +46,7 @@ class WillPaymentOrder extends Component {
             async onOk() {
                 const hasMsg = message.loading('');
                 await _this.updateShopNum(code, hasMsg);
-                let statements = `DELETE p.*, pp.* FROM userOrder p, orderMsg pp WHERE code = '${code}' AND p_code = '${code}'`;
+                let statements = `UPDATE userOrder SET o_status = '已取消' WHERE code = '${code}'`;
                 wantShopData({statements}).then(() => {
                     hasMsg();
                     _this.setState({

@@ -6,6 +6,7 @@ import WillSendOrder from './order-component/WillSendOrder';
 import WillTheGoodsOrder from './order-component/WillTheGoodsOrder';
 import WillEvaluationOrder from './order-component/WillEvaluationOrder';
 import DidCompleteOrder from './order-component/DidCompleteOrder';
+import RemComponentOrder from './order-component/RemComponentOrder';
 import {getQueryString} from '../../../../comment/methods/util';
 
 const TabPane = Tabs.TabPane;
@@ -49,7 +50,7 @@ class Order extends Component <props, any> {
                       <DidCompleteOrder />
                   </TabPane>
                   <TabPane tab="已取消" key="6">
-                      <div>取消订单</div>
+                      <RemComponentOrder />
                   </TabPane>
               </Tabs>
           </div>

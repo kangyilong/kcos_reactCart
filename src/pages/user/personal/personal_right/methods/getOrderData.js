@@ -5,7 +5,7 @@ const user_id = getUserId();
 
 export const getOrderData = (that, hasMsg, status, current = 1, pageSize = 10) => {
   // 先查订单总表
-  let statements = `SELECT count(*) AS total FROM userOrder WHERE o_status='待付款' AND user_id='${user_id}'`;
+  let statements = `SELECT count(*) AS total FROM userOrder WHERE o_status='${status}' AND user_id='${user_id}'`;
   wantShopData({statements}).then(data => {
     that.setState({
       total: data[0].total

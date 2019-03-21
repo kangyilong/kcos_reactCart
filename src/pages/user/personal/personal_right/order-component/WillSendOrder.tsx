@@ -52,7 +52,7 @@ class WillSendOrder extends Component {
 
     delUserOrder = (code: string, total: string) => {
         /*
-        * 取消订单
+        * 取消订单 将订单状态改变
         * 取消前先释放商品 update 表名 set 字段1 = ?,字段2 = ?,字段3 = ? where id = ?
         * */
         const _this = this, r_total = this.state.m_total + parseFloat(total);
@@ -64,7 +64,7 @@ class WillSendOrder extends Component {
                 // insert into 表名 (字段1,字段2,字段3) values (?,?,?)
                 const hasMsg = message.loading('');
                 await _this.updateShopNum(code, hasMsg);
-                const statements = `DELETE p.*, pp.* FROM userOrder p, orderMsg pp WHERE code = '${code}' AND p_code = '${code}'`;
+                const statements = `UPDATE userOrder SET o_status = '已取消' where code = '${code}'`;
                 const u_statements = `UPDATE userMsg SET m_total=${r_total} WHERE user_id='${_this.state.user_id}'`;
                 const run_time = new Date().getTime();
                 const r_statements = `INSERT INTO user_running_water (run_code,user_id,money_run,run_type,run_remark,run_time,run_order_code) values (?,?,?,?,?,?,?)`;

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
-import { NavLink } from "react-router-dom";
-import { Button, message, Modal } from 'antd';
 import OrderComponent from './OrderComponent.js';
 
 class WillEvaluationOrder extends Component {
