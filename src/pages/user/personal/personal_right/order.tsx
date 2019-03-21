@@ -1,17 +1,30 @@
 import React, {Component} from 'react';
 import { Tabs, Button } from 'antd';
+import { withRouter } from "react-router-dom";
 import WillPaymentOrder from './order-component/WillPaymentOrder';
+import WillSendOrder from './order-component/WillSendOrder';
+import WillTheGoodsOrder from './order-component/WillTheGoodsOrder';
+import WillEvaluationOrder from './order-component/WillEvaluationOrder';
+import DidCompleteOrder from './order-component/DidCompleteOrder';
+import {getQueryString} from '../../../../comment/methods/util';
 
 const TabPane = Tabs.TabPane;
 
 interface props {
-    isShow?: boolean
+    isShow?: boolean,
+    history: {
+        push: Function
+    }
 }
 
-export default class Order extends Component <props, any> {
+class Order extends Component <props, any> {
+
+    state = {
+        defaultActiveKey: getQueryString('type') || '1'
+    };
 
   callback = (values: any) => {
-    console.log(values);
+    this.props.history.push(`/personal-index?index=2&type=${values}`);
   };
 
   render() {
@@ -19,17 +32,29 @@ export default class Order extends Component <props, any> {
     return (
       <div className={`${isShow ? 'none' : ''} user-order`}>
           <div className="per-order-box">
-              <Tabs defaultActiveKey="1" onChange={this.callback}>
+              <Tabs defaultActiveKey={this.state.defaultActiveKey} onChange={this.callback}>
                   <TabPane tab="待付款" key="1">
                       <WillPaymentOrder />
                   </TabPane>
-                  <TabPane tab="待发货" key="2">Content of Tab Pane 2</TabPane>
-                  <TabPane tab="待收货" key="3">Content of Tab Pane 3</TabPane>
-                  <TabPane tab="待评价" key="4">Content of Tab Pane 3</TabPane>
-                  <TabPane tab="已完成" key="5">Content of Tab Pane 3</TabPane>
+                  <TabPane tab="待发货" key="2">
+                      <WillSendOrder />
+                  </TabPane>
+                  <TabPane tab="待收货" key="3">
+                      <WillTheGoodsOrder />
+                  </TabPane>
+                  <TabPane tab="待评价" key="4">
+                      <WillEvaluationOrder />
+                  </TabPane>
+                  <TabPane tab="已完成" key="5">
+                      <DidCompleteOrder />
+                  </TabPane>
+                  <TabPane tab="已取消" key="6">
+                      <div>取消订单</div>
+                  </TabPane>
               </Tabs>
           </div>
       </div>
     )
   }
 }
+export default withRouter<any>(Order);

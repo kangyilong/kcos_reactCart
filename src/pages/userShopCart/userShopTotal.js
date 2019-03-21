@@ -90,24 +90,29 @@ class UserShopTotal extends Component {
     });
 
     // 生成主订单语句
-    let o_time = new Date().getTime().toString();
-    let statements = `insert into userOrder (code,user_id,shop_total,shop_sum,o_status,zf_type,ps_type,o_time) values (?,?,?,?,?,?,?,?)`;
-    let parameter = JSON.stringify([
-      p_code,
-      this.state.userId,
-      this.state.totalMsg.total.toFixed(2),
-      this.state.totalMsg.len,
-      '待付款',
-      '1',
-      '1',
-      o_time
-    ]);
-    wantShopData({ statements, parameter }).then(data => {
-      hisMsg();
-      if(data.msg === 'ok') {
-        sessionStorage.setItem('orderCode', p_code);
-        this.props.history.push('/userOrder');
-      }
+    // 获取用户的默认地址
+    let a_statements = `SELECT address_id FROM userAddress WHERE user_id='${this.state.userId}' AND is_default=1`;
+    wantShopData({ statements: a_statements }).then(data => {
+      let o_time = new Date().getTime().toString();
+      let statements = `insert into userOrder (code,user_id,shop_total,shop_sum,o_status,zf_type,ps_type,o_time,add_ress_id) values (?,?,?,?,?,?,?,?,?)`;
+      let parameter = JSON.stringify([
+        p_code,
+        this.state.userId,
+        this.state.totalMsg.total.toFixed(2),
+        this.state.totalMsg.len,
+        '待付款',
+        '1',
+        '1',
+        o_time,
+        data[0].address_id
+      ]);
+      wantShopData({ statements, parameter }).then(data => {
+        hisMsg();
+        if(data.msg === 'ok') {
+          sessionStorage.setItem('orderCode', p_code);
+          this.props.history.push('/userOrder');
+        }
+      }, hisMsg);
     }, hisMsg);
   }
   render() {

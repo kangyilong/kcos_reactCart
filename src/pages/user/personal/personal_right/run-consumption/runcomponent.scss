@@ -1,0 +1,25 @@
+.to-up{
+  .tu-head{
+    font-size: 17px;
+    span{
+      color: #f56c6c;
+    }
+  }
+  .tu-content{
+    padding: 20px 10px 0;
+    p{
+      margin-bottom: 25px;
+    }
+    input{
+      width: 81%;
+    }
+    textarea{
+      vertical-align: top;
+      width: 81%;
+      height: 100px;
+      border: 1px solid #d9d9d9;
+      padding: 6px 10px;
+      border-radius: 4px;
+    }
+  }
+}

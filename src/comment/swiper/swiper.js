@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './swiper.scss';
-import store from '../../reduxs/store';
 import { addTodo, toggleTodo, setVisibilityFilter, VisibilityFilters } from '../../reduxs/action';
 
 export default class Swiper extends Component {

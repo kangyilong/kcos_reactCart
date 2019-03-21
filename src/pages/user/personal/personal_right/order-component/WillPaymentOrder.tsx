@@ -2,17 +2,10 @@ import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { Button, message, Modal } from 'antd';
-import NotData from '../../../../../comment/notData/notData';
-import { getUserId } from '../../../../../comment/methods/util.js';
 import { wantShopData } from '../../../../../api/shopApi.js';
-import{ getOrderData } from '../methods/getOrderData';
+import OrderComponent from './OrderComponent.js';
 
 const { confirm } = Modal;
-let shopMsg : Array<Array<any>> = [];
-const zfType = {
-    '1': '在线支付',
-    '2': '货到付款'
-};
 
 class WillPaymentOrder extends Component {
     constructor(props: object) {
@@ -20,9 +13,9 @@ class WillPaymentOrder extends Component {
     }
 
     state = {
-        user_id: getUserId(),
-        orderData: [],
-        shopMsg: shopMsg
+        current: 1,
+        pageSize: 3,
+        delSuccessful: false
     };
 
     updateShopNum = async (code: string, hasMsg: any) => {
@@ -41,7 +34,7 @@ class WillPaymentOrder extends Component {
         }, hasMsg);
     };
 
-    delUserOrder(code: string) {
+    delUserOrder = (code: string) => {
         /*
         * 取消订单
         * 取消前先释放商品 update 表名 set 字段1 = ?,字段2 = ?,字段3 = ? where id = ?
@@ -55,7 +48,10 @@ class WillPaymentOrder extends Component {
                 await _this.updateShopNum(code, hasMsg);
                 let statements = `DELETE p.*, pp.* FROM userOrder p, orderMsg pp WHERE code = '${code}' AND p_code = '${code}'`;
                 wantShopData({statements}).then(() => {
-                    getOrderData(_this, hasMsg, '待付款');
+                    hasMsg();
+                    _this.setState({
+                        delSuccessful: !_this.state.delSuccessful
+                    })
                 }, hasMsg);
             },
             okText: '确定',
@@ -63,60 +59,16 @@ class WillPaymentOrder extends Component {
         });
     };
 
-    componentWillMount() {
-        const hasMsg = message.loading('');
-        getOrderData(this, hasMsg, '待付款');
-    }
-
     render() {
         return (
             <div className="will-payment">
-                <ul className="will-all_ul">
-                    {
-                        this.state.orderData.length > 0 ? this.state.orderData.map((willOrderItem, index) => (
-                            <li className="will-all_li" key={index}>
-                                <div className="will-header">
-                                    <div className="head-left">
-                                        <p className="l-p01">订单号：<span>{willOrderItem['code']}</span>
-                                            <span>{willOrderItem['o_time'] ? new Date(+willOrderItem['o_time']).toLocaleString() : ''}</span>
-                                            <span>{zfType[willOrderItem['zf_type']]}</span>
-                                        </p>
-                                        <p className="l-p02">订单金额：<span>{willOrderItem['shop_total']}元</span></p>
-                                    </div>
-                                    <div className="head-right">
-                                        <NavLink
-                                            className="ant-btn ant-btn-primary"
-                                            to="/userOrder"
-                                            onClick={() => {sessionStorage.setItem('orderCode', willOrderItem['code'])}}
-                                        >立即支付</NavLink>
-                                        <Button style={{'marginLeft': '15px'}} onClick={this.delUserOrder.bind(this, willOrderItem['code'])}>取消订单</Button>
-                                    </div>
-                                </div>
-                                {
-                                    this.state.shopMsg[index] ? this.state.shopMsg[index].map(msgItem => (
-                                        <div className="will-container" key={msgItem.order_code}>
-                                            <div className="will-li_left">
-                                                <div className="left-img">
-                                                    <img src={msgItem.shop_pic} alt=""/>
-                                                </div>
-                                                <div className="left-txt">
-                                                    <p className="txt-p01">{msgItem['shop_name']}</p>
-                                                    <p className="txt-p02">{msgItem['shop_pri']}元 X <span>{msgItem['shop_val']}</span></p>
-                                                </div>
-                                            </div>
-                                            <div className="will-li_right">
-                                                <NavLink className="ant-btn" to={`/shopDet?productId=${msgItem.product_id}`}>商品详情</NavLink>
-                                            </div>
-                                        </div>
-                                    )) : null
-                                }
-                            </li>
-                        )) : null
-                    }
-                </ul>
-                <div className={this.state.orderData.length === 0 ? '' : 'none'}>
-                    <NotData promptTxt="还没有订单哦" />
-                </div>
+                <OrderComponent
+                    delUserOrder={this.delUserOrder}
+                    status="待付款"
+                    isDelOrder="1"
+                    zf_status="1"
+                    delSuccessful={this.state.delSuccessful}
+                />
             </div>
         )
     }

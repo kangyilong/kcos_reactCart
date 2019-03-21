@@ -56,7 +56,7 @@ class ShopDetHead extends Component {
 
   changeShopNumber = () => {
     // 先查到商品的库存数量 this.state.addShopVal
-    let allStatements = `select * from shopMsg where product_id=? and shop_id=?`;
+    let allStatements = `select shop_Num from shopMsg where product_id=? and shop_id=?`;
     let allParameter = JSON.stringify([
       this.state.productId,
       this.state.shopId
