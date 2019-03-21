@@ -41,7 +41,7 @@ class PersonalIndex extends Component {
     switch(this.state.selectedIndex) {
       case '1':
         return (
-          <Owner />
+          <Owner targetLeft={this.targetLeft}/>
         );
       case '2':
         return (
