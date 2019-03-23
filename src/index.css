@@ -26,6 +26,13 @@ a{
   text-decoration: none;
   color: #555;
 }
+textarea{
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: 1px solid #d5d5d5;
+  resize: none;
+}
 .line{
   width: 2px;
   height: 40%;

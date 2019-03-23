@@ -1,0 +1,105 @@
+.scoket-warp{
+  display: flex;
+  justify-content: space-around;
+  width: 660px;
+  margin: 0 auto;
+  padding-top: 40px;
+  >.scoket-user{
+    width: 200px;
+    height: 300px;
+    padding: 6px;
+    background-color: #fff;
+    ul{
+      height: 90%;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+      background-color: #fcfcfc;
+      li{
+        margin-top: 6px;
+        span{
+          vertical-align: bottom;
+          margin-left: 5px;
+          font-size: 16px;
+        }
+        img{
+          width: 25px;
+          height: 25px;
+          border-radius: 100%;
+        }
+        .user-level{
+          vertical-align: bottom;
+          font-size: 12px;
+          margin-left: 1px;
+        }
+      }
+    }
+  }
+  >.scoket-container{
+    width: 400px;
+    border: 1px solid #ccc;
+    height: 500px;
+    padding: 6px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    background-color: #fff;
+    .scoket-context{
+      width: 100%;
+      height: 80%;
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+      ul{
+        overflow-y: scroll;
+        height: 100%;
+        padding-bottom: 20px;
+        li{
+          margin-top: 6px;
+          .chat-content {
+            display: flex;
+            .msg-left{
+              img{
+                width: 20px;
+                height: 20px;
+                border-radius: 100%;
+              }
+              margin-right: 7px;
+              margin-left: 5px;
+            }
+            .msg-right{
+              font-size: 14px;
+              padding-top: 3px;
+            }
+          }
+          .send-time{
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+          }
+        }
+      }
+    }
+    .scoket-send{
+      height: 20%;
+      padding: 20px 0;
+      display: flex;
+      background-color: #fff;
+      .send-left{
+        width: 80%;
+        textarea {
+          width: 100%;
+          height: 100%;
+          outline: none;
+          padding-left: 4px;
+        }
+      }
+      .send-right{
+        width: 20%;
+        padding-top: 10px;
+        text-align: center;
+        button{
+          border: none;
+          outline: none;
+        }
+      }
+    }
+  }
+}

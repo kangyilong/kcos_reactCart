@@ -198,7 +198,7 @@ export default class Consumption extends Component <props, any> {
                       </p>
                       <p>
                           <label htmlFor="cz_text">充值备注：</label>
-                          <textarea name="cz_text" ref={(txt: any) => {this.state.moneyTextRef = txt}} placeholder="请输入充值备注" style={{'resize': 'none'}}></textarea>
+                          <textarea name="cz_text" ref={(txt: any) => {this.state.moneyTextRef = txt}} placeholder="请输入充值备注"></textarea>
                       </p>
                   </div>
               </div>

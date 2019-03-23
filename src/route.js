@@ -42,6 +42,9 @@ let ComponentData = [
   }, {
     path: '/personal-index',
     component: AsyncComponent(() => import('./pages/user/personal/index'))
+  }, {
+    path: '/scoket',
+    component: AsyncComponent(() => import('./pages/socket-demo/scoket.tsx'))
   }
 ];
 
