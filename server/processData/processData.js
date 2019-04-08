@@ -6,7 +6,7 @@ const { wantData } = require('../mysql/mysql');
 // statements：操作语句
 // parameter：操作的数据
 
-let wantOptionData = async(ctx) => { // 处理请求
+const wantOptionData = async(ctx) => { // 处理请求
   let res = ctx.request.body;
   let requestType = res.requestType;
   let statements = res.statements;

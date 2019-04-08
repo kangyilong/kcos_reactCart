@@ -131,4 +131,14 @@ class UserShopTotal extends Component {
     );
   }
 }
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserShopTotal));
+
+const compose = (...fns) => {
+  return fns.reduce((a, b) => (...args) => a(b(...args)));
+};
+
+const enhance = compose(
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps)
+);
+
+export default enhance(UserShopTotal);

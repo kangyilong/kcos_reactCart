@@ -10,15 +10,16 @@ const socket = io();
 const user_id = getUserId();
 const chatTypeMsg = {
     'onlineUserList': '在线用户',
-    'userLoginChat': '用户加入聊天',
-    'userSendMsg': '用户发送信息'
+    'userLoginChat': '加入聊天室',
+    'userSendMsg': '用户发送信息',
+    'userOutChat': '退出聊天室'
 };
 const isOnline = {
     '0': '离线',
     '1': '在线'
 };
 
-let SOCKET_INDEX = 0;
+let SOCKET_INDEX = 0, chatMsg = {chat_code: '', user_id: '', user_nick_name: ''};
 
 interface Props {
     history: {
@@ -27,11 +28,10 @@ interface Props {
 }
 
 function Scoket(props: Props) {
-
-    const [userMsg, setUserMsg] = useState({user_nick_name: ''}); // 用户信息
     const [chatCode, setChatCode] = useState(''); // 聊天表code
     const [chatUserList, setChatUserList] = useState([]); // 所有在线用户
     const [userChatMsgList, setUserChatMsgList] = useState([]); // 所有的聊天信息
+    let userMsg = '';
     let isChat = true;
     let textareaRef: any = null;
 
@@ -46,21 +46,22 @@ function Scoket(props: Props) {
                 return;
             }
             let msg = data[0];
-            setUserMsg(msg);
             socket.emit('welcome to me', { msg: msg.user_nick_name });
-            if(!isChat) {
-                return;
+            if(isChat) {
+                // 加入到聊天表
+                msg.user_hpic = msg.user_hpic ? msg.user_hpic : '/static/images/all/user.jpg';
+                msg.user_level = msg.user_level ? msg.user_level : '普通用户';
+                msg.user_id = user_id;
+                socket.emit('user msg', { userMsg: msg });
             }
-            // 加入到聊天表
-            msg.user_hpic = msg.user_hpic ? msg.user_hpic : '/static/images/all/user.jpg';
-            msg.user_level = msg.user_level ? msg.user_level : '普通用户';
-            msg.user_id = user_id;
-            socket.emit('user msg', { userMsg: msg });
+            // 4、
+            getUserList();
+            // 5、
+            getUserMsgList();
         });
     };
 
     let getUserList = async () => {
-        socket.emit('all online user', () => {});
         let u_statements = `SELECT user_id, user_nick_name, user_hpic, user_level FROM user_chat WHERE is_online = '1'`;
         wantShopData({statements: u_statements}).then(data => {
             setChatUserList(data);
@@ -74,6 +75,11 @@ function Scoket(props: Props) {
             let scoketUl: any = document.getElementById('scoket-ul');
             scoketUl.scrollTop = scoketUl.scrollHeight;
         });
+    };
+
+    let changeChatUser = async () => {
+        let i_statements = `UPDATE user_chat SET is_online = '1' WHERE chat_code = '${chatMsg.chat_code}' AND user_id = '${chatMsg.user_id}'`;
+        await wantShopData({statements: i_statements});
     };
 
     /*
@@ -91,21 +97,17 @@ function Scoket(props: Props) {
             return;
         }
         // 1、
-        let c_statements = `SELECT chat_code FROM user_chat WHERE user_id = '${user_id}'`;
+        let c_statements = `SELECT chat_code, user_nick_name FROM user_chat WHERE user_id = '${user_id}'`;
         await wantShopData({statements: c_statements}).then(async (data) => {
             if(data.length > 0) {
                 setChatCode(data[0].chat_code);
                 isChat = false;
                 // 3、
-                let i_statements = `UPDATE user_chat SET is_online = '1' WHERE chat_code = '${data[0].chat_code}' AND user_id = '${user_id}'`;
-                await wantShopData({statements: i_statements});
+                chatMsg = {chat_code: data[0].chat_code, user_id, user_nick_name: data[0].user_nick_name};
+                changeChatUser();
             }
             // 2、
             getUserMsg();
-            // 4、
-            getUserList();
-            // 5、
-            getUserMsgList();
         });
     };
 
@@ -119,10 +121,16 @@ function Scoket(props: Props) {
         getChatMsg();
     }, []);
 
+    function socketOut() {
+        socket.emit('me out socket', {user_id, user_nick_name: chatMsg.user_nick_name});
+    }
+
     socket.on('welcome to you', (data: any) => {
         if(SOCKET_INDEX === 0) {
+            userMsg = data.msg;
             message.success(`${data.msg}，欢迎来到kcos聊天室`, 1.5, () => {
                 SOCKET_INDEX = 0;
+                getUserList();
             });
         }
         SOCKET_INDEX ++;
@@ -143,6 +151,19 @@ function Scoket(props: Props) {
         }
     });
 
+    socket.on('out success', (data: any) => {
+        if(SOCKET_INDEX === 0) {
+            message.warning(data.user_nick_name + '退出聊天室', 1.5, () => {
+                SOCKET_INDEX = 0;
+                getUserList();
+                if(chatMsg.user_id === data.user_id) {
+                    props.history.push('/');
+                }
+            });
+        }
+        SOCKET_INDEX ++;
+    });
+
     socket.on('send error', (data: any) => {
         message.error(data.errorMsg);
     });
@@ -150,7 +171,17 @@ function Scoket(props: Props) {
     return (
         <div className="scoket-warp">
             <div className="scoket-user">
-                <p style={{'marginBottom': '10px'}}>在线用户</p>
+                <p style={{'marginBottom': '10px'}}>
+                    <span>在线用户</span>
+                    <span
+                        style={{'color': '#BD2D30', 'float': 'right', 'fontSize': '13px', 'cursor': 'pointer'}}
+                        onClick={
+                            () => {
+                                socketOut()
+                            }
+                        }
+                    >退出聊天室 </span>
+                </p>
                 <ul>
                     {
                         chatUserList.map((item: any) => (

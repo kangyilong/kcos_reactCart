@@ -57,7 +57,8 @@
       "react-app"
     ],
     "plugins": [
-      "transform-decorators-legacy"
+      "transform-decorators-legacy",
+      "transform-async-to-generator"
     ]
   },
   "proxy": "http://localhost:3666"
