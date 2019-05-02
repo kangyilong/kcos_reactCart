@@ -43,7 +43,8 @@ class UserOrder extends Component{
       visible: false,
       u_login: null,
       remarkRef: null,
-      u_total: 0
+      u_total: 0,
+      isAddress: true
     };
   }
   async componentWillMount() {
@@ -173,12 +174,22 @@ class UserOrder extends Component{
     });
   };
   
+  isThereAreRess = (isAddress) => {
+    this.setState({
+      isAddress
+    });
+  };
+  
   submitOrder = () => {
     /*
     * 确定订单后改变该订单的状态、支付方式、配送方式、备注
     * update 表名 set 字段1 = ?,字段2 = ?,字段3 = ? where id = ?
     * 订单编号：this.state.orderCode
     * */
+    if(!this.state.isAddress) {
+      message.warning('请输入地址后操作', 1.5);
+      return;
+    }
     if(this.state.u_total < parseFloat(this.state.orderMsg.shop_total)) {
       message.warning('余额不足，请充值', 1.5).then(() => {
         this.props.history.push('/personal-index?index=5');
@@ -282,7 +293,7 @@ class UserOrder extends Component{
               </div>
             </div>
             <div className="address-box">
-              <AddRess o_code={this.state.orderCode}/>
+              <AddRess o_code={this.state.orderCode} isThereAreRess={this.isThereAreRess}/>
             </div>
             <div className="user-msg">
               <textarea placeholder="说点什么吧~" ref={(value) => {this.state.remarkRef = value;}}></textarea>

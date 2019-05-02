@@ -104,7 +104,7 @@ class UserShopTotal extends Component {
         '1',
         '1',
         o_time,
-        data[0].address_id
+        data[0] ? data[0].address_id : ''
       ]);
       wantShopData({ statements, parameter }).then(data => {
         hisMsg();

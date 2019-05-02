@@ -61,7 +61,7 @@ export default class Consumption extends Component <props, any> {
 
     getUserRunning = () => {
         // 获取流水数据
-        let statements = `SELECT * FROM user_running_water WHERE user_id = '${this.state.user_id}'`;
+        let statements = `SELECT * FROM user_running_water WHERE user_id = '${this.state.user_id}' ORDER BY run_time DESC`;
         wantShopData({statements}).then(data => {
             let dataSource = [];
             if(data && Array.isArray(data)) {

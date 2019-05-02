@@ -56,7 +56,7 @@ class Header extends Component {
   async componentWillMount() {
     this.setState({
       u_login: !!(await isLogin()).length
-    })
+    });
   }
 
   goPersonal = () => {
@@ -78,7 +78,8 @@ class Header extends Component {
           <span
             style={{'color': '#f5222d'}}
             onClick={() => {
-              outLogin()
+              outLogin();
+              this.props.history.push('/');
             }}
           >退 出</span>
       </Menu.Item>

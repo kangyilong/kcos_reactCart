@@ -31,7 +31,7 @@ function OwnerComponentMsg(props: Props) {
             setWillOrderNum(data1[0].total);
             setSendOrderNum(data2[0].total);
             setGoodOrderNum(data3[0].total);
-            let m_total = parseFloat(data4[0].m_total).toFixed(2) + '元';
+            let m_total = parseFloat(data4[0].m_total ? data4[0].m_total : 0).toFixed(2) + '元';
             setUserTotalNum(m_total);
         });
     };

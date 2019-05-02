@@ -41,13 +41,14 @@ export default class Register extends Component {
       message.error('密码不一致');
       return;
     }
-    let statements = 'insert into userMsg(user_id, user_nick_name, user_email, user_paw) values (?, ?, ?, ?)';
+    let statements = 'insert into userMsg(user_id, user_nick_name, user_email, user_paw, user_level) values (?, ?, ?, ?, ?)';
     let userId = 'kcos1314' + new Date().getTime() + Math.floor(Math.random() * 10000);
     let parameter = JSON.stringify([
       userId,
       userName,
       userEmail,
-      userPaw
+      userPaw,
+      '1'
     ]);
     let hideMsg = message.loading('正在努力为你注册中...', 0);
     wantShopData({statements, parameter}).then(data => {

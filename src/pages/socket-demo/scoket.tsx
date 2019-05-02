@@ -62,14 +62,14 @@ function Scoket(props: Props) {
     };
 
     let getUserList = async () => {
-        let u_statements = `SELECT user_id, user_nick_name, user_hpic, user_level FROM user_chat WHERE is_online = '1'`;
+        let u_statements = `SELECT p.user_id, p.user_nick_name, pp.user_hpic, p.user_level FROM user_chat AS p LEFT JOIN userMsg AS pp on p.user_id = pp.user_id  WHERE p.is_online = '1'`;
         wantShopData({statements: u_statements}).then(data => {
             setChatUserList(data);
         });
     };
 
     let getUserMsgList = async () => {
-        let l_statements = `SELECT p.user_id, p.user_nick_name, p.user_hpic, p.user_level, pp.chat_record, pp.chat_time FROM user_chat p, user_record pp WHERE p.user_id = pp.user_id`;
+        let l_statements = `SELECT p.user_id, p.user_nick_name, um.user_hpic, p.user_level, pp.chat_record, pp.chat_time FROM user_chat p LEFT JOIN userMsg AS um on p.user_id = um.user_id, user_record pp  WHERE p.user_id = pp.user_id`;
         await wantShopData({statements: l_statements}).then(data => {
             setUserChatMsgList(data);
             let scoketUl: any = document.getElementById('scoket-ul');

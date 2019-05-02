@@ -56,7 +56,7 @@ class PersonalHeader extends Component {
   async componentWillMount() {
     this.setState({
       u_login: !!(await isLogin()).length
-    })
+    });
   }
   render() {
     const personal = (  // 个人中心
@@ -78,7 +78,7 @@ class PersonalHeader extends Component {
           <span
             style={{'color': '#f5222d'}}
             onClick={
-              () => { outLogin() }
+              () => { outLogin(); this.props.history.push('/'); }
             }
           >退 出</span>
         </Menu.Item>

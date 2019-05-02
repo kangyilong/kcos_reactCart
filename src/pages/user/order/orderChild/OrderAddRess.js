@@ -36,6 +36,8 @@ export default class AddRess extends Component {
             user_name: this.state.userAddRess[0].user_name
           })
         });
+      }else {
+        this.props.isThereAreRess(false);
       }
     });
   };
@@ -91,6 +93,7 @@ export default class AddRess extends Component {
         wantShopData({statements: o_statements});
       }
       this.queryAddRess();
+      this.props.isThereAreRess(true);
     }, hasMsg);
   };
   handleCancel = () => {
