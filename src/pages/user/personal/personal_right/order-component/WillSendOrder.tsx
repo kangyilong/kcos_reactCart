@@ -64,7 +64,7 @@ class WillSendOrder extends Component {
                 // insert into 表名 (字段1,字段2,字段3) values (?,?,?)
                 const hasMsg = message.loading('');
                 await _this.updateShopNum(code, hasMsg);
-                const statements = `UPDATE userOrder SET o_status = '已取消' where code = '${code}'`;
+                const statements = `UPDATE userOrder SET o_status = '已取消' where code = '${code}' and user_id = '${_this.state.user_id}'`;
                 const u_statements = `UPDATE userMsg SET m_total=${r_total} WHERE user_id='${_this.state.user_id}'`;
                 const run_time = new Date().getTime();
                 const r_statements = `INSERT INTO user_running_water (run_code,user_id,money_run,run_type,run_remark,run_time,run_order_code) values (?,?,?,?,?,?,?)`;

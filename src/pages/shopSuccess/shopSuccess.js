@@ -4,6 +4,7 @@ import Header from '../../comment/header';
 import Footer from '../../comment/footer';
 import RemShop from '../remUserShop/remShop';
 import { Button, message } from 'antd';
+import LoginHOC from '../../component/HOC/VisLogin';
 import { wantShopData } from '../../api/shopApi';
 import { toHeavyFn } from "../../comment/methods/util";
 import { mapStateToProps, mapDispatchToProps } from './mapDataToProps';
@@ -14,7 +15,6 @@ class ShopSuccess extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      productDet: JSON.parse(sessionStorage.getItem('productDet')) || '',
       shopData: {},
       productGenre: [],
       productMsg: {},
@@ -22,7 +22,7 @@ class ShopSuccess extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     let hidMsg = message.loading('正努力加载中...');
     this.props.getShopSuccessData();
     wantShopData({ statements: 'SELECT * FROM shopMsg' }).then(data => {
@@ -70,4 +70,4 @@ class ShopSuccess extends Component {
     )
   }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(ShopSuccess);
+export default LoginHOC(connect(mapStateToProps, mapDispatchToProps)(ShopSuccess));

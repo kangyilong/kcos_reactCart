@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { Button, message, Modal } from 'antd';
 import { wantShopData } from '../../../../../api/shopApi.js';
 import OrderComponent from './OrderComponent.js';
+import {getUserId} from "../../../../../comment/methods/util";
 
 const { confirm } = Modal;
 
@@ -15,7 +16,8 @@ class WillPaymentOrder extends Component {
     state = {
         current: 1,
         pageSize: 3,
-        delSuccessful: false
+        delSuccessful: false,
+        user_id: getUserId()
     };
 
     updateShopNum = async (code: string, hasMsg: any) => {
@@ -46,7 +48,7 @@ class WillPaymentOrder extends Component {
             async onOk() {
                 const hasMsg = message.loading('');
                 await _this.updateShopNum(code, hasMsg);
-                let statements = `UPDATE userOrder SET o_status = '已取消' WHERE code = '${code}'`;
+                let statements = `UPDATE userOrder SET o_status = '已取消' WHERE code = '${code}' and user_id = '${_this.state.user_id}'`;
                 wantShopData({statements}).then(() => {
                     hasMsg();
                     _this.setState({

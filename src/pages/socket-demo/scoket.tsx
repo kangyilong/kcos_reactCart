@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import io from 'socket.io-client';
 import { withRouter } from 'react-router-dom';
 import {Button, message} from 'antd';
+import LoginHOC from '../../component/HOC/VisLogin';
 import {getUserId, outLogin} from '../../comment/methods/util';
 import {wantShopData} from '../../api/shopApi';
 import './scoket.scss';
@@ -233,7 +234,7 @@ function Scoket(props: Props) {
                                     }
                                 }
                             }
-                        ></textarea>
+                        />
                     </div>
                     <div className="send-right">
                         <Button onClick={sendMessage}>发送</Button>
@@ -244,4 +245,4 @@ function Scoket(props: Props) {
     )
 }
 
-export default withRouter(Scoket);
+export default LoginHOC(withRouter(Scoket));

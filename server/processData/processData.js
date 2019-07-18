@@ -14,8 +14,6 @@ const wantOptionData = async(ctx) => { // 处理请求
   ctx.response.type = 'json';
   await wantData(statements, parameter, requestType).then(data => {
     ctx.body = data;
-  }, () => {
-    ctx.body = { err: 'error' };
   });
 };
 

@@ -8,11 +8,18 @@ export function mapStateToProps(state) {
 export function mapDispatchToProps(dispatch) {
   const productDet = JSON.parse(sessionStorage.getItem('productDet'));
   return {
-    getShopSuccessData: (productId, shopId) => { // 查询单个商品信息
-      dispatch(getShopDetData(productId ? productId : productDet.productId, shopId ? shopId : productDet.shopId))
+    getShopSuccessData: (pId, sId) => { // 查询单个商品信息
+      let productId = pId ? pId : productDet ? productDet.productId : '';
+      let shopId = sId ? sId : productDet ? productDet.shopId : '';
+      if(productId && shopId) {
+          dispatch(getShopDetData(productId, shopId))
+      }
     },
-    getShopDetail: (productId) => { // 查询产品信息
-      dispatch(getShopDetData(productId ? productId : productDet.productId))
+    getShopDetail: (pId) => { // 查询产品信息
+        let productId = pId ? pId : productDet ? productDet.productId : '';
+        if(productId) {
+            dispatch(getShopDetData(productId));
+        }
     }
   }
 }

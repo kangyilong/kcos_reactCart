@@ -38,7 +38,7 @@ export default function OwnerComponentHeader() {
     return (
         <>
             <div className="owner-head">
-                <div className="img-box">
+                <div className="ownerimg-box">
                     <div className="show-img">
                         <img src={userImage} alt=""/>
                     </div>

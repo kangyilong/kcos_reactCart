@@ -11,6 +11,8 @@
     "@types/socket.io-client": "^1.4.32",
     "antd": "^3.10.9",
     "axios": "^0.18.0",
+    "koa-bodyparser": "^4.2.1",
+    "os": "^0.1.1",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-router-dom": "^4.4.0",

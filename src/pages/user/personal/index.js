@@ -8,6 +8,7 @@ import Collection from './personal_right/collection';
 import Consumption from './personal_right/consumption';
 import Order from './personal_right/order';
 import Owner from './personal_right/owner';
+import LoginHOC from '../../../component/HOC/VisLogin';
 import { getQueryString } from "../../../comment/methods/util";
 
 import './style/index.scss';
@@ -62,7 +63,7 @@ class PersonalIndex extends Component {
     }
   };
   
-  componentWillMount() {
+  componentDidMount() {
     this.showComponentRight();
   }
 
@@ -88,4 +89,4 @@ class PersonalIndex extends Component {
   }
 }
 
-export default withRouter(PersonalIndex);
+export default LoginHOC(withRouter(PersonalIndex));

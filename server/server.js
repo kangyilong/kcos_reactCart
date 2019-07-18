@@ -1,21 +1,40 @@
 const Koa = require('koa');
 const Path = require('path');
 const Static = require('koa-static');
-const KoaBody = require('koa-body')();
+const KoaBody = require('koa-body')({
+    'formLimit':'10mb',
+    'jsonLimit':'10mb',
+    'textLimit':'10mb',
+});
 const Route = require('./router/router');
 const { chatMessage } = require('./mysql/chat_mysql');
 const App = new Koa();
-const main = Static(Path.join(__dirname));
+const main = Static(Path.join(__dirname, 'static'));
+const interfaces = require('os').networkInterfaces(); // 获取局域网中的本机iP地址
+
+let IPAddress = '';
+for(let devName in interfaces){
+    let iface = interfaces[devName];
+    for(let i=0;i<iface.length;i++){
+        let alias = iface[i];
+        if(alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal){
+            IPAddress = alias.address;
+        }
+    }
+}
+console.log(IPAddress);
 
 App.use(main);
 App.use(KoaBody);
-
 App.use(async (ctx, next) => {
-  const hrefList = ctx.request.header.origin.split(':');
-  const prot = hrefList[hrefList.length - 1];
-  ctx.set('Access-Control-Allow-Origin', `http://localhost:${prot}`);
-  ctx.set('Access-Control-Allow-Headers', 'authorization,content-type');
-  ctx.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,DELETE');
+  let CUSTOM_HEADERS = ctx.request.header.authorization;
+  if(ctx.request.method.toLowerCase() === 'options' || CUSTOM_HEADERS === 'kcos') {
+    const hrefList = ctx.request.header.origin.split(':');
+    const PROT = hrefList[hrefList.length - 1];
+    ctx.set('Access-Control-Allow-Origin', `http://localhost:${PROT}`);
+    ctx.set('Access-Control-Allow-Headers', 'authorization,content-type');
+    ctx.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,DELETE');
+  }
   await next();
 });
 

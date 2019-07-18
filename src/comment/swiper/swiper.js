@@ -12,7 +12,7 @@ export default class Swiper extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     let i = this.props.data.length;
     setTimeout(() => {
       this.setState({

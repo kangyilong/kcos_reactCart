@@ -53,7 +53,7 @@ class PersonalHeader extends Component {
       u_login: null
     }
   }
-  async componentWillMount() {
+  async componentDidMount() {
     this.setState({
       u_login: !!(await isLogin()).length
     });
